@@ -1,0 +1,3 @@
+# About Help Center
+
+Start typing here...
