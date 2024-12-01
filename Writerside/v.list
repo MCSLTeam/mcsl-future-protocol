@@ -1,8 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE vars SYSTEM "https://resources.jetbrains.com/writerside/1.0/vars.dtd">
 <vars>
-    <var name="mcsl" value="MCSL Future"/>
-    <var name="daemon" value="MCSL Future Daemon"/>
-    <var name="web" value="MCSL Future Web"/>
-    <var name="wpf" value="MCSL Future WPF"/>
 </vars>

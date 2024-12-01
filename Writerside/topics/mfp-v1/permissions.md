@@ -1,16 +1,14 @@
 # 权限
 
-## 什么是权限 {#definition}
-
-<tip>
-权限的给予、权限列表等可以在WPF或Web的用户管理页面中进行操作
-</tip>
-
 **权限（Permission）**，在MCSL中类似于Bukkit权限，是一种以名称的形式定义每个用户能够访问的内容、执行的操作等的方法。
 
 它们可用于允许用户访问实例、配置等或插件定义的一些其他内容。
 
 例如：给予用户`mcsl.daemon.instance.create`权限就能使用户能够创建实例。
+
+<tip>
+权限的给予、权限列表等可以在 <tooltip term="wpf">WPF</tooltip> 或 <tooltip term="web">Web</tooltip> 的用户管理页面中进行操作
+</tip>
 
 ## 权限节点 {#nodes}
 
