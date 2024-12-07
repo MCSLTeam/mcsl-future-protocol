@@ -20,11 +20,11 @@
 }
 ```
 
-|   字段   |        数据类型         |                          说明                          |
-|:------:|:-------------------:|:----------------------------------------------------:|
-| action |       string        |         操作名称，使用下划线命名法，如`file_upload_request`         |
-| params |       object        |             操作参数，一个JSON对象，内含参数，没有则为`{}`              |
-|  echo  | optional&lt;string> | 回声，如果指定了 `echo` 字段, 那么响应也会同时包含一个 `echo` 字段, 它们会有相同的值 |
+|   字段   |        数据类型         |                  说明                  |
+|:------:|:-------------------:|:------------------------------------:|
+| action |       string        | 操作名称，使用下划线命名法，如`file_upload_request` |
+| params | optional&lt;object> |    操作参数，一个JSON对象，内含参数，可选，默认为`{}`     |
+|  echo  |       string        |     回声，响应也包含一个 `echo` 字段，它们的值相同      |
 
 ### 响应示例 {#response-example}
 
@@ -62,7 +62,7 @@
             <tr>
                 <td>data</td>
                 <td>object</td>
-                <td>返回数据，内含数据，没有则为 <code>{}</code></td>
+                <td>返回数据，内含数据，没有数据则为 <code>{}</code></td>
             </tr>
             <tr>
                 <td>message</td>
@@ -71,7 +71,7 @@
             </tr>
             <tr>
                 <td>echo</td>
-                <td>optional&lt;string></td>
+                <td>string</td>
                 <td>回声，与请求中的 <code>echo</code> 字段的值相同</td>
             </tr>
         </table>
@@ -116,7 +116,7 @@
             </tr>
             <tr>
                 <td>echo</td>
-                <td>optional&lt;string></td>
+                <td>string</td>
                 <td>回声，与请求中的 <code>echo</code> 字段的值相同</td>
             </tr>
         </table>

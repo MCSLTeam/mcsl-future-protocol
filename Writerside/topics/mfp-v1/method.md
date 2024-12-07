@@ -5,12 +5,13 @@
 
 ## 连接 {#connect}
 
-连接 <tooltip term="daemon">Daemon</tooltip> 时，须使用 WebSocket 连接 URL：
-**ws(wss)://&lt;IP>/api/v1?token=&lt;令牌>**
-
-如果令牌正确，将连接升级为 WebSocket。
-
-如果令牌错误，返回 HTTP 状态码：400。
+1. 使用 HTTP 向 `http(s)://<Daemon 地址>/login` 发生 **POST** 请求以获取令牌
+    * 请求表单内容：
+        * `usr` - 用户名
+        * `pwd` - 密码
+        * `expired` - 令牌过期时长（单位：秒），可选，默认 `30`
+    * 响应主体为一串文本，即 JWT 令牌
+2. 使用令牌连接 WebSocket：`ws(s)://<Daemon 地址>/api/v1?token=<令牌>`
 
 ## 通讯
 
