@@ -30,7 +30,9 @@
 1. `size` 在正整数范围
 2. <tooltip term="daemon">Daemon</tooltip> 无同名文件正在上传
 
-*注：文件大小不得超过2GB (2^31-1字节)*
+<warning>
+文件大小不得超过2GB (2^31-1字节)
+</warning>
 
 ### 响应
 
