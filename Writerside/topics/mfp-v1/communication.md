@@ -13,7 +13,7 @@
 * `version` - 程序版本，如 `1.0.0.0`
 * `apiVersion` - API 版本，用于确定 **WebSocket** 连接地址，如 `v1`
 
-## Token
+## 令牌
 
 令牌（Token）是一串用来鉴权的字符串，可用于连接 <tooltip term="daemon">Daemon</tooltip>。
 

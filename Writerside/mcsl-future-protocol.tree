@@ -7,7 +7,7 @@
                   start-page="introduction.md">
 
     <toc-element topic="introduction.md"/>
-    <toc-element topic="method.md"/>
+    <toc-element topic="communication.md"/>
     <toc-element topic="permissions.md"/>
     <toc-element topic="action.md">
         <toc-element topic="action-system.md"/>
