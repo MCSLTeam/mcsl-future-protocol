@@ -11,7 +11,6 @@
     <toc-element topic="permissions.md"/>
     <toc-element topic="action.md">
         <toc-element topic="action-system.md"/>
-        <toc-element topic="action-token.md"/>
         <toc-element topic="action-instance.md"/>
         <toc-element topic="action-config.md"/>
         <toc-element topic="action-misc.md"/>

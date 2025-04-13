@@ -1,6 +1,6 @@
 # 简介
 
-MCSL Future Protocol（简称MFP），是 MCSL Future 中 <tooltip term="wpf">WPF</tooltip> 和 <tooltip term="web">Web</tooltip> 与 <tooltip term="daemon">Daemon</tooltip> 通讯使用的一种协议。
+MCSL Future Protocol（简称MFP），是 MCSL Future 中 <tooltip term="wpf">WPF</tooltip>、<tooltip term="web">Web</tooltip> 和 <tooltip term="tauri">Tauri</tooltip> 与 <tooltip term="daemon">Daemon</tooltip> 通讯使用的一种协议。
 协议的数据传输全部为 **JSON** 格式。
 协议使用 **WebSocket** 作为通讯方式，见[](method.md)。
 

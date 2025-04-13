@@ -4,5 +4,6 @@
     <term name="mfp">MCSL Future Protocol</term>
     <term name="daemon">MCSL Future Daemon</term>
     <term name="web">MCSL Future Web</term>
+    <term name="tauri">MCSL Future Tauri</term>
     <term name="wpf">MCSL Future WPF</term>
 </terms>

@@ -16,7 +16,7 @@
     "参数1": "ABC",
     "参数2": 123
   },
-  "echo": "echo"
+  "id": "abcdefgh-ijkl-mnop-qrst-uvwxyz012345"
 }
 ```
 
@@ -24,7 +24,7 @@
 |:------:|:-------------------:|:------------------------------------:|
 | action |       string        | 操作名称，使用下划线命名法，如`file_upload_request` |
 | params | optional&lt;object> |    操作参数，一个JSON对象，内含参数，可选，默认为`{}`     |
-|  echo  |       string        |     回声，响应也包含一个 `echo` 字段，它们的值相同      |
+|   id   |        uuid         |     操作编号，响应也包含一个 `id` 字段，它们的值相同      |
 
 ### 响应示例 {#response-example}
 
@@ -40,7 +40,7 @@
                 "返回数据2": 123
               },
               "message": "消息",
-              "echo": "echo"
+              "id": "abcdefgh-ijkl-mnop-qrst-uvwxyz012345"
             }
         </code-block>
         <table>
@@ -70,9 +70,9 @@
                 <td>消息，操作成功时始终是 <code>""</code></td>
             </tr>
             <tr>
-                <td>echo</td>
-                <td>string</td>
-                <td>回声，与请求中的 <code>echo</code> 字段的值相同</td>
+                <td>id</td>
+                <td>uuid</td>
+                <td>操作编号，与请求中的 <code>id</code> 字段的值相同</td>
             </tr>
         </table>
     </tab>
@@ -85,7 +85,7 @@
                 "retcode": 1400
               },
               "message": "File not found!",
-              "echo": "echo"
+              "id": "abcdefgh-ijkl-mnop-qrst-uvwxyz012345"
             }
         </code-block>
         <table>
@@ -115,9 +115,9 @@
                 <td>消息，操作失败时将显示错误信息</td>
             </tr>
             <tr>
-                <td>echo</td>
-                <td>string</td>
-                <td>回声，与请求中的 <code>echo</code> 字段的值相同</td>
+                <td>id</td>
+                <td>uuid</td>
+                <td>操作编号，与请求中的 <code>id</code> 字段的值相同</td>
             </tr>
         </table>
     </tab>
@@ -126,7 +126,6 @@
 <seealso>
    <category ref="related">
        <a href="action-system.md"/>
-       <a href="action-token.md"/>
        <a href="action-instance.md"/>
        <a href="action-config.md"/>
        <a href="action-misc.md"/>
