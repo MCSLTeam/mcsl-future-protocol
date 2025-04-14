@@ -35,11 +35,11 @@
             {
               "status": "ok",
               "retcode": 0,
+              "message": "Ok",
               "data": {
                 "返回数据1": "ABC",
                 "返回数据2": 123
               },
-              "message": "消息",
               "id": "abcdefgh-ijkl-mnop-qrst-uvwxyz012345"
             }
         </code-block>
@@ -67,7 +67,7 @@
             <tr>
                 <td>message</td>
                 <td>string</td>
-                <td>消息，操作成功时始终是 <code>""</code></td>
+                <td>消息，操作成功时始终是 <code>"Ok"</code></td>
             </tr>
             <tr>
                 <td>id</td>
@@ -77,14 +77,13 @@
         </table>
     </tab>
     <tab title="错误">
-        操作失败，返回错误的 <code>retcode</code> 和消息<br/>
+        操作失败，返回错误的 <a href="action-retcode.md"/> 和消息<br/>
         <code-block lang="json">
             {
               "status": "error",
-              "data": {
-                "retcode": 1400
-              },
+              "retcode": 10000,
               "message": "File not found!",
+              "data": null,
               "id": "abcdefgh-ijkl-mnop-qrst-uvwxyz012345"
             }
         </code-block>
@@ -107,7 +106,7 @@
             <tr>
                 <td>data</td>
                 <td>object</td>
-                <td>返回数据，操作失败时始终是 <code>{}</code></td>
+                <td>返回数据，操作失败时始终是 <code>null</code></td>
             </tr>
             <tr>
                 <td>message</td>
