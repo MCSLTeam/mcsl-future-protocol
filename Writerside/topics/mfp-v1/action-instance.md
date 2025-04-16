@@ -1,5 +1,9 @@
 # 实例操作
 
+<tip>
+以下请求和响应中省略了 `id` 和 `message` 字段
+</tip>
+
 ## AddInstance 添加实例 {#add-instance}
 
 通过一系列参数创建mc服务器实例

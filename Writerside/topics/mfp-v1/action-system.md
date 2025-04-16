@@ -1,5 +1,9 @@
 # 系统操作
 
+<tip>
+以下请求和响应中省略了 `id` 和 `message` 字段
+</tip>
+
 ## FileUploadRequest 文件上传-请求 {#file-upload-request}
 
 文件上传至 <> 前的请求，需要提供上传的目标路径，文件校验码和文件大小，由于使用分块传输，故还需提供分块大小。
