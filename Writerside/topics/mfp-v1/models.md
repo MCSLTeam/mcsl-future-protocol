@@ -110,11 +110,11 @@
 | none     | 官方源(默认)                                        |
 | bmcl_api | [BMCL Api](https://bmclapidoc.bangbang93.com/) |
 
-## InstanceStatus 实例状态 {#instance-status}
+## InstanceReport 实例状态 {#instance-report}
 
 | 字段         | 数据类型                                  | 说明                                                                                                                         |
 |------------|---------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| status     | [ServerStatus (enum)](#server-status) | 实例运行状态                                                                                                                     |
+| status     | [InstanceStatus (enum)](#instance-status) | 实例运行状态                                                                                                                     |
 | config     | [InstanceConfig](#instance-config)    | 实例配置                                                                                                                       |                     |        |
 | properties | list[string]                          | server.properties                                                                                                          |
 | players    | list[[Player](#player)]               | 在线玩家列表(1.7以前的版本由于[slp协议](https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Server_List_Ping)没有玩家列表字段, 故总为空列表) |
@@ -126,7 +126,7 @@
 | name | string | 玩家名称   |
 | uuid | string | 玩家UUID |
 
-## ServerStatus 实例服务器运行状态 (枚举) {#server-status}
+## InstanceStatus 实例运行状态 (枚举) {#instance-status}
 
 | 枚举值      | 说明     |
 |----------|--------|
