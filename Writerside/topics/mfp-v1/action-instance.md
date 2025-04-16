@@ -217,15 +217,15 @@
 | 字段名 | 数据类型 | 说明 |
 |-----|------|----|
 
-## GetInstanceStatus 获取实例状态 {#get-instance-status}
+## GetInstanceReport 获取实例报告 {#get-instance-report}
 
-获取实例状态
+获取实例报告
 
 ### 请求
 
 ```json
 {
-  "action": "get_instance_status",
+  "action": "get_instance_report",
   "params": {
     "id": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2"
   }
@@ -242,7 +242,7 @@
 {
   "status": "ok",
   "data": {
-    "status": {
+    "report": {
       "status": "running",
       "config": {
         "mc_version": "1.12.1",
@@ -268,9 +268,9 @@
 
 | 字段名    | 数据类型                                        | 说明   |
 |--------|---------------------------------------------|------|
-| status | [InstanceStatus](models.md#instance-status) | 实例状态 |
+| report | [InstanceReport](models.md#instance-report) | 实例报告 |
 
-## GetAllStatus 获取实例状态 {#get-all-status}
+## GetAllReports获取实例状态 {#get-all-reports}
 
 获取所有实例状态
 
@@ -278,7 +278,7 @@
 
 ```json
 {
-  "action": "get_all_status",
+  "action": "get_all_reports",
   "params": {}
 }
 ```
@@ -292,7 +292,7 @@
 {
   "status": "ok",
   "data": {
-    "status": {
+    "reports": {
       "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2": {
         "status": "running",
         "config": {
@@ -310,6 +310,6 @@
 }
 ```
 
-| 字段名    | 数据类型                                                               | 说明   |
-|--------|--------------------------------------------------------------------|------|
-| status | dict[string (uuid v4),[InstanceStatus](models.md#instance-status)] | 实例状态 |
+| 字段名     | 数据类型                                                               | 说明      |
+|---------|--------------------------------------------------------------------|---------|
+| reports | dict[string (uuid v4),[InstanceReport](models.md#instance-report)] | 所有实例的报告 |
