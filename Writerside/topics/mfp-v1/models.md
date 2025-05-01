@@ -124,12 +124,20 @@ PlaceHolderString 实际上是一个string, 但是他可以解析`{KEY}`的内�
 
 ## InstanceReport 实例状态 {#instance-report}
 
-| 字段         | 数据类型                                      | 说明                                                                                                                                              |
-|------------|-------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-| status     | [InstanceStatus (enum)](#instance-status) | 实例运行状态                                                                                                                                          |
-| config     | [InstanceConfig](#instance-config)        | 实例配置                                                                                                                                            |                     |        |
-| properties | dict[str, str]                            | server.properties, 非java版mc服务器实例为空字典                                                                                                            |
-| players    | list[[Player](#player)]                   | 在线玩家列表(1.7以前的版本由于[slp协议](https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Server_List_Ping)没有玩家列表字段, 故总为空列表, 非java版mc服务器实例同样为空列表) |
+| 字段                  | 数据类型                                       | 说明                                                                                                                                              |
+|---------------------|--------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| status              | [InstanceStatus (enum)](#instance-status)  | 实例运行状态                                                                                                                                          |
+| config              | [InstanceConfig](#instance-config)         | 实例配置                                                                                                                                            |                     |        |
+| properties          | dict[str, str]                             | server.properties, 非java版mc服务器实例为空字典                                                                                                            |
+| players             | list[[Player](#player)]                    | 在线玩家列表(1.7以前的版本由于[slp协议](https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Server_List_Ping)没有玩家列表字段, 故总为空列表, 非java版mc服务器实例同样为空列表) |
+| performance_counter | [PerformanceCounter](#performance-counter) | 实例性能计数器                                                                                                                                         |
+
+## PerformanceCounter 实例性能计数器 {#performance-counter}
+
+| 字段     | 数据类型   | 说明                   |
+|--------|--------|----------------------|  
+| cpu    | double | cpu使用率(%),取值范围:0~100 |
+| memory | long   | 内存使用率(Byte)          |
 
 ## Player MC玩家信息 {#player}
 
