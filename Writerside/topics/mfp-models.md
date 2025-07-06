@@ -38,8 +38,8 @@ PlaceHolderString 实际上是一个string, 但是他可以解析`{KEY}`的内�
 
 ## InstanceFactorySetting 实例工厂设置 {#instance-factory-setting}
 
-决定Daemon如何安装实例的设置, 包含必选字段和可选字段.
-<br>
+决定Daemon如何安装实例的设置, 包含必选字段和可选字段
+
 聪明的你一定发现了 [InstanceFactorySetting](#instance-factory-setting)实际上是继承自 [InstanceConfig](#instance-config)
 
 | 字段名           | 数据类型                                  | 说明                                 |
