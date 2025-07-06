@@ -25,7 +25,7 @@
 
 主令牌会在 <tooltip term="daemon">Daemon</tooltip> 首次运行时生成并在控制台输出。
 
-主令牌作为令牌连接 <tooltip term="daemon">Daemon</tooltip> 时拥有全部 [](permissions.md)。
+主令牌作为令牌连接 <tooltip term="daemon">Daemon</tooltip> 时拥有全部 [](mfp-permissions.md)。
 
 <tip>
 主令牌正则表达式为 <code>/^[a-zA-Z0-9]{32}$/</code>

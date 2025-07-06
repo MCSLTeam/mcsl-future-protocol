@@ -180,7 +180,7 @@
 
 | 字段名  | 数据类型                                    | 说明    |
 |------|-----------------------------------------|-------|
-| meta | [FileMetadata](models.md#file-metadata) | 文件元信息 |
+| meta | [FileMetadata](mfp-models.md#file-metadata) | 文件元信息 |
 
 ## GetDirectoryInfo 获取目录信息 {#get-directory-info}
 
@@ -246,8 +246,8 @@
 | 字段名    | 数据类型                                              | 说明                                                   |
 |--------|---------------------------------------------------|------------------------------------------------------|
 | parent | string                                            | 相对于 <tooltip term="daemon">Daemon</tooltip> 根目录的相对路径 |
-| meta   | [DirectoryMetadata](models.md#directory-metadata) | 目录元数据                                                |
-| files  | list<[FileData](models.md#file-data)>             | 当前目录下子文件的信息列表                                        |
+| meta   | [DirectoryMetadata](mfp-models.md#directory-metadata) | 目录元数据                                                |
+| files  | list<[FileData](mfp-models.md#file-data)>             | 当前目录下子文件的信息列表                                        |
 
 ## FileDownloadRequest 文件下载-请求 {#file-download-request}
 

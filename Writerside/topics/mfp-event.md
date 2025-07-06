@@ -27,8 +27,8 @@
 
 <seealso>
    <category ref="related">
-       <a href="event-system.md"/>
-       <a href="event-instance.md"/>
-       <a href="event-misc.md"/>
+       <a href="mfp-event-system.md"/>
+       <a href="mfp-event-instance.md"/>
+       <a href="mfp-event-misc.md"/>
     </category>
 </seealso>

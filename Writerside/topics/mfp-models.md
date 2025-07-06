@@ -1,6 +1,6 @@
 # 数据模型
 
-数据模型是在 [](action.md) 和 [](event.md) 中常用的一组 `object` 类型数据
+数据模型是在 [](mfp-action.md) 和 [](mfp-event.md) 中常用的一组 `object` 类型数据
 
 ## PlaceHolderString {#place-holder-string}
 

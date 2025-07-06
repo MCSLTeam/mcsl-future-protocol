@@ -77,7 +77,7 @@
         </table>
     </tab>
     <tab title="错误">
-        操作失败，返回错误的 <a href="action-retcode.md"/> 和消息<br/>
+        操作失败，返回错误的 <a href="mfpaction-retcode.md"/> 和消息<br/>
         <code-block lang="json">
             {
               "status": "error",
@@ -101,7 +101,7 @@
             <tr>
                 <td>retcode</td>
                 <td>number</td>
-                <td>响应码，用于区分错误类型，详见 <a href="action-retcode.md"/></td>
+                <td>响应码，用于区分错误类型，详见 <a href="mfpaction-retcode.md"/></td>
             </tr>
             <tr>
                 <td>data</td>
@@ -124,9 +124,9 @@
 
 <seealso>
    <category ref="related">
-       <a href="action-system.md"/>
-       <a href="action-instance.md"/>
-       <a href="action-config.md"/>
-       <a href="action-misc.md"/>
+       <a href="mfpaction-system.md"/>
+       <a href="mfp-action-instance.md"/>
+       <a href="mfp-action-config.md"/>
+       <a href="mfp-action-misc.md"/>
     </category>
 </seealso>

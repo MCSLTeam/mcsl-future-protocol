@@ -30,7 +30,7 @@
 
 | 字段      | 数据类型                                                         | 说明     |
 |---------|--------------------------------------------------------------|--------|
-| setting | [InstanceFactorySetting](models.md#instance-factory-setting) | 实例工厂设置 |
+| setting | [InstanceFactorySetting](mfp-models.md#instance-factory-setting) | 实例工厂设置 |
 
 ### 响应
 
@@ -57,7 +57,7 @@
 
 | 字段名    | 数据类型                                        | 说明       |
 |--------|---------------------------------------------|----------|
-| config | [InstanceConfig](models.md#instance-config) | 创建的实例的配置 |
+| config | [InstanceConfig](mfp-models.md#instance-config) | 创建的实例的配置 |
 
 ## RemoveInstance 移除实例 {#remove-instance}
 
@@ -270,9 +270,9 @@
 }
 ```
 
-| 字段名    | 数据类型                                        | 说明   |
-|--------|---------------------------------------------|------|
-| report | [InstanceReport](models.md#instance-report) | 实例报告 |
+| 字段名    | 数据类型                                            | 说明   |
+|--------|-------------------------------------------------|------|
+| report | [InstanceReport](mfp-models.md#instance-report) | 实例报告 |
 
 ## GetAllReports获取实例状态 {#get-all-reports}
 
@@ -314,6 +314,6 @@
 }
 ```
 
-| 字段名     | 数据类型                                                               | 说明      |
-|---------|--------------------------------------------------------------------|---------|
-| reports | dict[string (uuid v4),[InstanceReport](models.md#instance-report)] | 所有实例的报告 |
+| 字段名     | 数据类型                                                                   | 说明      |
+|---------|------------------------------------------------------------------------|---------|
+| reports | dict[string (uuid v4),[InstanceReport](mfp-models.md#instance-report)] | 所有实例的报告 |
