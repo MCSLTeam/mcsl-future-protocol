@@ -7,14 +7,14 @@
                   start-page="mfp-introduction.md">
 
     <toc-element topic="mfp-introduction.md"/>
-    <toc-element topic="mfp-communication.md"/>
+    <toc-element topic="mfp-connection.md"/>
     <toc-element topic="mfp-permissions.md"/>
     <toc-element topic="mfp-action.md">
-        <toc-element topic="mfpaction-system.md"/>
+        <toc-element topic="mfp-action-system.md"/>
         <toc-element topic="mfp-action-instance.md"/>
         <toc-element topic="mfp-action-config.md"/>
         <toc-element topic="mfp-action-misc.md"/>
-        <toc-element topic="mfpaction-retcode.md"/>
+        <toc-element topic="mfp-action-errcode.md"/>
     </toc-element>
     <toc-element topic="mfp-event.md">
         <toc-element topic="mfp-event-system.md"/>

@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE terms SYSTEM "https://resources.jetbrains.com/writerside/1.0/glossary.dtd">
 <terms>
-    <term name="mfp">MCSL Future Protocol</term>
-    <term name="daemon">MCSL Future Daemon</term>
-    <term name="web">MCSL Future Web</term>
-    <term name="tauri">MCSL Future Tauri</term>
-    <term name="wpf">MCSL Future WPF</term>
 </terms>

@@ -2,6 +2,4 @@
 <!DOCTYPE categories
         SYSTEM "https://resources.jetbrains.com/writerside/1.0/categories.dtd">
 <categories>
-    <category id="related" name="相关文档" order="1"/>
-    <category id="external" name="外部资源" order="2"/>
 </categories>
