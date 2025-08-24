@@ -74,4 +74,4 @@ ws(s)://<Daemon 地址>/api/v1?token=<子令牌>
 
 ## 通信格式
 
-建立连接后将使用 **MessagePack** 格式进行通信，消息主要分为 [](mfp-action.md) 与 [](mfp-event.md) 两种。
+建立连接后将使用 **MessagePack** 格式进行通信，消息主要分为 [](action.md) 与 [](event.md) 两种。

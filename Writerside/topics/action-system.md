@@ -1,12 +1,8 @@
 # 系统操作
 
-<tip>
-以下请求和响应中省略了 `id` 和 `message` 字段
-</tip>
-
 ## FileUploadRequest 文件上传-请求 {#file-upload-request}
 
-文件上传至 <> 前的请求，需要提供上传的目标路径，文件校验码和文件大小，由于使用分块传输，故还需提供分块大小。
+文件上传至守护进程前的请求，需要提供上传的目标路径，文件校验码和文件大小，由于使用分块传输，故还需提供分块大小。
 
 ### 请求
 
@@ -180,7 +176,7 @@
 
 | 字段名  | 数据类型                                        | 说明    |
 |------|---------------------------------------------|-------|
-| meta | [FileMetadata](mfp-models.md#file-metadata) | 文件元信息 |
+| meta | [FileMetadata](models.md#file-metadata) | 文件元信息 |
 
 ## GetDirectoryInfo 获取目录信息 {#get-directory-info}
 
@@ -246,8 +242,8 @@
 | 字段名    | 数据类型                                                  | 说明              |
 |--------|-------------------------------------------------------|-----------------|
 | parent | string                                                | 相对于守护进程根目录的相对路径 |
-| meta   | [DirectoryMetadata](mfp-models.md#directory-metadata) | 目录元数据           |
-| files  | list<[FileData](mfp-models.md#file-data)>             | 当前目录下子文件的信息列表   |
+| meta   | [DirectoryMetadata](models.md#directory-metadata) | 目录元数据           |
+| files  | list<[FileData](models.md#file-data)>             | 当前目录下子文件的信息列表   |
 
 ## FileDownloadRequest 文件下载-请求 {#file-download-request}
 

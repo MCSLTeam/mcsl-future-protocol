@@ -7,11 +7,11 @@ MCSL Future 采用 [客户端-服务器架构](https://zh.wikipedia.org/wiki/%E5
 
 **MCSL Future 通信协议（MCSL Future Protocol，简称 MFP）** 是用于规范守护进程与客户端之间通信的协议标准。
 
-连接守护进程需要令牌以进行鉴权，详见 **[](mfp-connection.md)**。
+连接守护进程需要令牌以进行鉴权，详见 **[](connection.md)**。
 
 通讯建立后，使用 **MessagePack** 格式进行数据传输，主要采用基于 **WebSocket** 的通信模式。
 
 通讯包含以下两个核心部分：
 
-- **[](mfp-action.md)**：客户端发起请求，服务端响应操作结果；
-- **[](mfp-event.md)**：服务端主动向客户端推送消息或状态更新。
+- **[](action.md)**：客户端发起请求，服务端响应操作结果；
+- **[](event.md)**：服务端主动向客户端推送消息或状态更新。
