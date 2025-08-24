@@ -40,7 +40,7 @@
 | name            | str                            | 实例名称                                                     |
 | type            | [InstanceType](#instance-type) | 实例类型                                                     |
 | startup_cmd     | str                            | 服务器启动命令                                                  |
-| arguments       | array<str>                     | Java 参数或可执行文件参数列表，可选，缺省时为空                               |
+| arguments       | array&lt;str>                  | Java 参数或可执行文件参数列表，可选，缺省时为空                               |
 | input_encoding  | str                            | `stdin` 编码，可选，缺省时默认为 `UTF-8`                             |
 | output_encoding | str                            | `stdout` 编码，可选，缺省时默认为 `UTF-8`                            |
 | env             | map<str, str>                  | 环境变量，可选，缺省时为空；<br/>可使用 `{NAME}` 占位符，将替换为名为 `NAME` 的环境变量值 |
@@ -56,7 +56,7 @@
 | mc_version      | string                                    | Minecraft JE 版本，非 Minecraft JE 实例或非 `core` 安装方式时忽略           |
 | loader_version  | string                                    | 模组 / 插件端版本，非 Minecraft JE 实例或非 `core` 安装方式时忽略                |
 | mirror          | [Mirror](#mirror)                         | 下载镜像，非 Minecraft JE 实例或非 `core` 安装方式时忽略，可选，缺省时默认使用官方源        |
-| arguments       | array<str>                                | Java 参数或可执行文件参数列表，可选，缺省时为空                                   |
+| arguments       | array&lt;str>                             | Java 参数或可执行文件参数列表，可选，缺省时为空                                   |
 | input_encoding  | str                                       | `stdin` 编码，可选，缺省时默认为 `UTF-8`                                 |
 | output_encoding | str                                       | `stdout` 编码，可选，缺省时默认为 `UTF-8`                                |
 | env             | map<str, str>                             | 环境变量，可选，缺省时为空；<br/>可使用 `{NAME}` 占位符，将替换为名为 `NAME` 的环境变量值     |
