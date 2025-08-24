@@ -2,7 +2,7 @@
 
 ## 信息获取
 
-向 `http(s)://<Daemon 地址>/info` 发起 **GET** 请求，可获取服务器基本信息。
+向 `http(s)://<守护进程地址>/info` 发起 **GET** 请求，可获取服务器基本信息。
 
 ### 响应字段
 
@@ -42,7 +42,7 @@
 
 ## 申请子令牌
 
-向 `http(s)://<Daemon 地址>/api/v1/subtoken` 发送 **POST** 请求，请求体为 JSON 格式。
+向 `http(s)://<守护进程地址>/api/v1/subtoken` 发送 **POST** 请求，请求体为 JSON 格式。
 
 ### 请求字段
 
@@ -69,7 +69,7 @@
 使用 WebSocket 连接以下地址即可建立通信：
 
 ```uri
-ws(s)://<Daemon 地址>/api/v1?token=<子令牌>
+ws(s)://<守护进程地址>/api/v1?token=<子令牌>
 ```
 
 ## 通信格式

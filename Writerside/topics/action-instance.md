@@ -1,225 +1,94 @@
 # 实例操作
 
-<tip>
-以下请求和响应中省略了 `id` 和 `message` 字段
-</tip>
+## CreateInstance 添加实例 {#create-instance}
 
-## AddInstance 添加实例 {#add-instance}
-
-通过一系列参数创建mc服务器实例
+- 操作说明：创建服务器实例；
+- 所需权限：`mcsl.daemon.instance.create`。
 
 ### 请求
 
-```json
-{
-  "action": "add_instance",
-  "params": {
-    "setting": {
-      "source": "https://maven.minecraftforge.net/net/minecraftforge/forge/1.12.1-14.22.1.2478/forge-1.12.1-14.22.1.2478-installer.jar",
-      "source_type": "core",
-      "mc_version": "1.12.1",
-      "name": "forge-1.12.1-14.22.1.2478",
-      "java_path": "java",
-      "target": "forge_server.jar",
-      "instance_type": "forge",
-      "target_type": "jar"
-    }
-  }
-}
-```
-
-| 字段      | 数据类型                                                         | 说明     |
-|---------|--------------------------------------------------------------|--------|
-| setting | [InstanceFactorySetting](models.md#instance-factory-setting) | 实例工厂设置 |
+- 参数类型：[`InstanceInstallationInfo`](models.md#instance-installation-info)；
+- 参数说明：实例工厂设置。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "config": {
-      "mc_version": "1.12.1",
-      "name": "forge-1.12.1-14.22.1.2478",
-      "java_path": "java",
-      "target": "server.jar",
-      "instance_type": "forge",
-      "target_type": "jar",
-      "uuid": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2",
-      "input_encoding": "utf-8",
-      "output_encoding": "utf-8",
-      "java_args": []
-    }
-  },
-  "message": ""
-}
-```
-
-| 字段名    | 数据类型                                        | 说明       |
-|--------|---------------------------------------------|----------|
-| config | [InstanceConfig](models.md#instance-config) | 创建的实例的配置 |
+- 响应类型：`bin8` | 无响应内容；
+- 响应说明：若安装方式为 `pack` 或 `zip`时，返回文件上传 ID，用于使用 [FileUpload](action-system.md#file-download) 上传，30秒后失效并取消安装。
 
 ## RemoveInstance 移除实例 {#remove-instance}
 
-使用实例的UUID移除实例
+- 操作说明：移除服务器实例；
+- 所需权限：`mcsl.daemon.instance.remove`。
 
 ### 请求
 
-```json
-{
-  "action": "remove_instance",
-  "params": {
-    "id": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2"
-  }
-}
-```
-
-| 字段 | 数据类型             | 说明      |
-|----|------------------|---------|
-| id | string (uuid v4) | 实例的UUID |
+- 参数类型：`bin8`；
+- 参数说明：实例 ID。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {},
-  "message": ""
-}
-```
-
-| 字段名 | 数据类型 | 说明 |
-|-----|------|----|
+无响应内容。
 
 ## StartInstance 启动实例 {#start-instance}
 
-使用实例的UUID启动实例
+- 操作说明：启动服务器实例；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.operation.start`。
 
 ### 请求
 
-```json
-{
-  "action": "start_instance",
-  "params": {
-    "id": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2"
-  }
-}
-```
-
-| 字段 | 数据类型             | 说明      |
-|----|------------------|---------|
-| id | string (uuid v4) | 实例的UUID |
+- 参数类型：`bin8`；
+- 参数说明：实例 ID。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {},
-  "message": ""
-}
-```
-
-| 字段名 | 数据类型 | 说明 |
-|-----|------|----|
+无响应内容。
 
 ## StopInstance 停止实例 {#stop-instance}
 
-使用实例的UUID停止实例, 相当于利用[SendToInstance](#send-to-instance)发送"stop".
+- 操作说明：停止服务器实例，相当于使用 [ExecuteCmd](#execute-cmd) 发送 `stop`；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.operation.stop` 或 `mcsl.daemon.instance.<实例 ID>.command`。
 
 ### 请求
 
-```json
-{
-  "action": "stop_instance",
-  "params": {
-    "id": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2"
-  }
-}
-```
-
-| 字段 | 数据类型             | 说明      |
-|----|------------------|---------|
-| id | string (uuid v4) | 实例的UUID |
+- 参数类型：`bin8`；
+- 参数说明：实例 ID。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {},
-  "message": ""
-}
-```
-
-| 字段名 | 数据类型 | 说明 |
-|-----|------|----|
-
-## SendToInstance 发送信息到实例控制台 {#send-to-instance}
-
-将message发送到指定实例控制台
-
-### 请求
-
-```json
-{
-  "action": "send_to_instance",
-  "params": {
-    "id": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2",
-    "message": "say Hello World!"
-  }
-}
-```
-
-| 字段      | 数据类型             | 说明         |
-|---------|------------------|------------|
-| id      | string (uuid v4) | 实例的UUID    |
-| message | string           | 要发送到控制台的消息 |
-
-### 响应
-
-```json
-{
-  "status": "ok",
-  "data": {},
-  "message": ""
-}
-```
-
-| 字段名 | 数据类型 | 说明 |
-|-----|------|----|
+无响应内容。
 
 ## KillInstance 发送信息到实例控制台 {#kill-instance}
 
-强行关闭实例进程, 非必要不要使用该action, 因为强行关闭实例进程可能会导致数据丢失, 除非实例进程无响应.
+- 操作说明：强制关闭服务器实例，杀死实例进程；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.operation.kill`。
 
 ### 请求
 
-```json
-{
-  "action": "kill_instance",
-  "params": {
-    "id": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2"
-  }
-}
-```
-
-| 字段 | 数据类型             | 说明      |
-|----|------------------|---------|
-| id | string (uuid v4) | 实例的UUID |
+- 参数类型：`bin8`；
+- 参数说明：实例 ID。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {},
-  "message": ""
-}
-```
+无响应内容。
 
-| 字段名 | 数据类型 | 说明 |
-|-----|------|----|
+## ExecuteCmd 执行命令 {#execute-cmd}
+
+- 操作说明：将消息发送到指定实例的 `stdin`；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.command`。
+
+### 请求
+
+- 参数类型：`map<str, any>`
+- 参数字段：
+
+| 字段  | 数据类型 | 说明               |
+|-----|------|------------------|
+| id  | bin8 | 实例 ID            |
+| msg | str  | 要发送到 `stdin` 的消息 |
+
+### 响应
+
+无响应内容。
 
 ## GetInstanceReport 获取实例报告 {#get-instance-report}
 
@@ -227,52 +96,13 @@
 
 ### 请求
 
-```json
-{
-  "action": "get_instance_report",
-  "params": {
-    "id": "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2"
-  }
-}
-```
-
-| 字段 | 数据类型             | 说明      |
-|----|------------------|---------|
-| id | string (uuid v4) | 实例的UUID |
+- 参数类型：`bin8`；
+- 参数说明：实例 ID。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "report": {
-      "status": "running",
-      "config": {
-        "mc_version": "1.12.1",
-        "name": "forge-1.12.1-14.22.1.2478",
-        "...": "..."
-      },
-      "properties": [
-        "accepts-transfers=false",
-        "allow-flight=false",
-        "..."
-      ],
-      "players": [
-        {
-          "name": "Ares_Connor",
-          "uuid": "759c4726-6d04-4cd4-a4e5-c719416e04ad"
-        }
-      ]
-    }
-  },
-  "message": ""
-}
-```
-
-| 字段名    | 数据类型                                            | 说明   |
-|--------|-------------------------------------------------|------|
-| report | [InstanceReport](models.md#instance-report) | 实例报告 |
+- 响应类型：[`InstanceReport`](models.md#instance-report)；
+- 响应说明：实例报告。
 
 ## GetAllReports获取实例状态 {#get-all-reports}
 
@@ -280,40 +110,9 @@
 
 ### 请求
 
-```json
-{
-  "action": "get_all_reports",
-  "params": {}
-}
-```
-
-| 字段 | 数据类型 | 说明 |
-|----|------|----|
+无参数。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "reports": {
-      "fdbf680c-fe52-4f1d-89ba-a0d9d8b857b2": {
-        "status": "running",
-        "config": {
-          "...": "..."
-        },
-        "properties": [
-          "..."
-        ],
-        "players": []
-      },
-      "...": "..."
-    }
-  },
-  "message": ""
-}
-```
-
-| 字段名     | 数据类型                                                                   | 说明      |
-|---------|------------------------------------------------------------------------|---------|
-| reports | dict[string (uuid v4),[InstanceReport](models.md#instance-report)] | 所有实例的报告 |
+- 响应类型：<code>map<bin8, [InstanceReport](models.md#instance-report)></code>；
+- 响应说明：所有实例的报告，键为实例 ID。

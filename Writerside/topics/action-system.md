@@ -2,366 +2,141 @@
 
 ## FileUploadRequest 文件上传-请求 {#file-upload-request}
 
-文件上传至守护进程前的请求，需要提供上传的目标路径，文件校验码和文件大小，由于使用分块传输，故还需提供分块大小。
+- 操作说明：请求将文件上传至守护进程，文件存在则覆盖；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.file.write`。
 
 ### 请求
 
-```json
-{
-  "action": "file_upload_request",
-  "params": {
-    "path": "path/to/file",
-    "sha1": "114514114514114514114514114514",
-    "timeout": 120000,
-    "size": 1919810
-  }
-}
-```
+- 参数类型：`map<str, any>`；
+- 参数字段：
 
-| 字段      | 数据类型                | 说明                                                                                        |
-|---------|---------------------|-------------------------------------------------------------------------------------------|
-| path    | optional&lt;string> | 上传的文件将要存放的位置，不存在则上传到默认文件夹                                                                 |
-| sha1    | optional&lt;string> | 文件SHA-1校验码，不存在则不检查SHA-1                                                                   |
-| timeout | optional&lt;long>   | 文件上传超时（单位：ms），默认`120000`（即2分钟）<br/>如果两次[FileUploadChunk](#file-upload-chunk)的间隔超过此时长则取消上传 |
-| size    | long                | 文件总大小                                                                                     |
+| 字段       | 数据类型 | 说明                   |
+|----------|------|----------------------|
+| instance | bin8 | 上传文件存放的实例            |
+| path     | str  | 要存放文件的在实例下的相对路径      |
+| sha1     | str  | 文件SHA-1校验码，可选，缺省时不校验 |
 
-#### 请求校验
+### 响应
 
-1. `size` 在正整数范围
-2. 守护进程无同名文件正在上传
+- 响应类型：`bin8`；
+- 响应说明：上传 ID，类型为 UUID v4，用于使用 [FileUpload](#file-upload) 上传，30秒后失效。
+
+## FileUpload 文件上传-上传 {#file-upload}
 
 <warning>
-文件大小不得超过2GB (2^31-1字节)
+此接口为 <strong>HTTP(S)</strong> 协议。
 </warning>
 
-### 响应
-
-```json
-{
-  "status": "ok",
-  "data": {
-    "file_id": "abcdefg-hijk-lmno-pqrstyvw"
-  },
-  "message": ""
-}
-```
-
-| 字段      | 数据类型   | 说明         |
-|---------|--------|------------|
-| file_id | string | 文件ID（文件上传） |
-
-## FileUploadChunk 文件上传-区块上传 {#file-upload-chunk}
-
-获取到 `file_id` 后，客户端上传文件的分块数据。
+将文件上传至守护进程，文件存在则覆盖。
 
 ### 请求
 
-```json
-{
-  "action": "file_upload_chunk",
-  "params": {
-    "file_id": "abcdefg-hijk-lmno-pqrstyvw",
-    "offset": 114514,
-    "data": "..."
-  }
-}
-```
-
-| 字段      | 数据类型   | 说明               |
-|---------|--------|------------------|
-| file_id | string | 文件ID（文件上传）       |
-| offset  | long   | 分块偏移量            |
-| data    | string | 字符串形式的 `bytes[]` |
-
-#### 请求校验
-
-1. `file_id` 存在
-2. `offset` 大于0且小于文件长度
-3. 若上传完毕，校验SHA-1
+- 请求地址：`http(s)://<守护进程地址>/api/v1/upload/<上传 ID，UUID 字符串形式>`；
+- 请求方法：**POST**；
+- 请求类型：`multipart/form-data`；
+- 请求主体说明：要上传的文件内容。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "done": false,
-    "received": 1048576
-  },
-  "message": ""
-}
-```
+<tabs>
+    <tab title="上传成功">
+        <ul>
+            <li>状态码： <strong>200</strong> ；</li>
+            <li>响应主体：空。</li>
+        </ul>
+    </tab>
+    <tab title="上传 ID 不存在">
+        <ul>
+            <li>状态码： <strong>404</strong> ；</li>
+            <li>响应主体：空。</li>
+        </ul>
+    </tab>
+</tabs>
 
-| 字段       | 数据类型    | 说明      |
-|----------|---------|---------|
-| done     | boolean | 是否上传完毕  |
-| received | long    | 已接受的字节数 |
+## FileUploadProgress 文件上传-获取进度 {#file-upload-progress}
 
-## FileUploadCancel 文件上传-取消 {#file-upload-cancel}
-
-通过 `file_id` 取消上传任务
+- 操作说明：通过上传 ID 获取上传进度；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.file.write`。
 
 ### 请求
 
-```json
-{
-  "action": "file_upload_cancel",
-  "params": {
-    "file_id": "..."
-  }
-}
-```
-
-#### 请求校验
-
-1. `file_id` 存在
-
-| 字段名     | 数据类型   | 说明         |
-|---------|--------|------------|
-| file_id | string | 文件ID（文件上传） |
+- 参数类型：`bin8`；
+- 参数说明：上传 ID。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {},
-  "message": ""
-}
-```
-
-| 字段名 | 数据类型 | 说明 |
-|-----|------|----|
+- 响应类型：`int64`；
+- 响应说明：已上传的字节数。
 
 ## GetFileInfo 获取文件消息 {#get-file-info}
 
-获取指定路径文件的信息
+- 操作说明：获取指定路径文件的信息；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.file.<read|write>`。
 
 ### 请求
 
-```json
-{
-  "action": "get_file_info",
-  "params": {
-    "path": "path/to/file"
-  }
-}
-```
+- 参数类型：`map<str, any>`；
+- 参数字段：
 
-#### 请求校验
-
-1. 路径存在且是文件
-
-| 字段名  | 数据类型   | 说明         |
-|------|--------|------------|
-| path | string | 文件路径（相对路径） |
+| 字段名      | 数据类型 | 说明          |
+|----------|------|-------------|
+| instance | bin8 | 文件所在的实例     |
+| path     | str  | 文件在实例下的相对路径 |
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "meta": {
-      "read_only": false,
-      "size": 114514,
-      "creation_time": 17777777777,
-      "last_write_time": 17777777777,
-      "last_access_time": 17777777777
-    }
-  },
-  "message": ""
-}
-```
-
-| 字段名  | 数据类型                                        | 说明    |
-|------|---------------------------------------------|-------|
-| meta | [FileMetadata](models.md#file-metadata) | 文件元信息 |
-
-## GetDirectoryInfo 获取目录信息 {#get-directory-info}
-
-获取指定路径目录的信息
-
-### 请求
-
-```json
-{
-  "action": "get_directory_info",
-  "params": {
-    "path": "path/to/dir"
-  }
-}
-```
-
-#### 请求校验
-
-1. 路径存在且是目录
-
-| 字段名  | 数据类型   | 说明         |
-|------|--------|------------|
-| path | string | 目录路径（相对路径） |
-
-### 响应
-
-```json
-{
-  "status": "ok",
-  "data": {
-    "parent": "relative/to/daemon/root",
-    "files": [
-      {
-        "name": "file1",
-        "type": "file",
-        "meta": {
-          "read_only": false,
-          "size": 114514,
-          "link_target": "some/path",
-          "hidden": false,
-          "creation_time": 17777777777,
-          "last_write_time": 17777777777,
-          "last_access_time": 17777777777
-        }
-      },
-      {
-        "name": ".dir1",
-        "type": "directory",
-        "meta": {
-          "hidden": true,
-          "link_target": "some/path",
-          "creation_time": 17777777777,
-          "last_write_time": 17777777777,
-          "last_access_time": 17777777777
-        }
-      }
-    ]
-  },
-  "message": ""
-}
-```
-
-| 字段名    | 数据类型                                                  | 说明              |
-|--------|-------------------------------------------------------|-----------------|
-| parent | string                                                | 相对于守护进程根目录的相对路径 |
-| meta   | [DirectoryMetadata](models.md#directory-metadata) | 目录元数据           |
-| files  | list<[FileData](models.md#file-data)>             | 当前目录下子文件的信息列表   |
+- 响应类型：[`FileData`](models.md#file-data)；
+- 响应说明：文件或目录的信息。
 
 ## FileDownloadRequest 文件下载-请求 {#file-download-request}
 
-客户端请求下载文件，守护进程打开文件流并发回客户端
+- 操作说明：请求将守护进程中的文件下载至本地；
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.file.read`。
 
 ### 请求
 
-```json
-{
-  "action": "file_download_request",
-  "params": {
-    "path": "path/to/file"
-  }
-}
-```
-
-| 字段名  | 数据类型   | 说明         |
-|------|--------|------------|
-| path | string | 文件路径（相对路径） |
-
-#### 请求校验
-
-1. 路径存在且为文件
+| 字段       | 数据类型 | 说明          |
+|----------|------|-------------|
+| instance | bin8 | 文件所在的实例     |
+| path     | str  | 文件在实例下的相对路径 |
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "file_id": "...",
-    "size": 1919810,
-    "sha1": "..."
-  },
-  "message": ""
-}
-```
+- 响应类型：`map<str, any>`；
+- 响应字段：
 
-| 字段名     | 数据类型   | 说明         |
-|---------|--------|------------|
-| file_id | string | 文件ID（文件下载） |
-| sha1    | string | 文件SHA-1校验码 |
-| size    | long   | 文件大小       |
+| 字段名         | 数据类型 | 说明                                                               |
+|-------------|------|------------------------------------------------------------------|
+| download_id | bin8 | 下载 ID，类型为 UUID v4，用于使用 [FileDownload](#file-download) 下载，30秒后失效。 |
+| sha1        | str  | 文件 SHA-1 校验码                                                     |
 
-## FileDownloadChunk 文件下载-区块 {#file-download-chunk}
+## FileDownload 文件下载-下载 {#file-download}
 
-客户端请求下载文件的一部分
+<warning>
+此接口为 <strong>HTTP(S)</strong> 协议。
+</warning>
+
+将文件上传至守护进程，文件存在则覆盖。
 
 ### 请求
 
-```json
-{
-  "action": "file_download_chunk",
-  "params": {
-    "file_id": "...",
-    "range": "0..1024"
-  }
-}
-```
-
-| 字段名     | 数据类型   | 说明                 |
-|---------|--------|--------------------|
-| file_id | string | 文件ID（文件下载）         |
-| range   | string | 要下载的范围（单位：字节），左闭右开 |
-
-#### 请求校验
-
-1. `file_id` 存在
-2. 范围起始≥0 且 范围结束≤文件大小
+- 请求地址：`http(s)://<守护进程地址>/api/v1/download/<下载 ID，UUID 字符串形式>`；
+- 请求方法：**GET**；
+- 请求主体说明：要下载的文件内容。
 
 ### 响应
 
-```json
-{
-  "status": "ok",
-  "data": {
-    "content": "..."
-  },
-  "message": ""
-}
-```
-
-| 字段名  | 数据类型   | 说明               |
-|------|--------|------------------|
-| data | string | 字符串形式的 `bytes[]` |
-
-## FileDownloadClose 文件下载-关闭 {#file-download-close}
-
-客户端终止或者完成下载文件时，请求服务端关闭和释放相关文件资源
-
-### 请求
-
-```json
-{
-  "action": "file_download_close",
-  "params": {
-    "file_id": "..."
-  }
-}
-```
-
-| 字段名     | 数据类型   | 说明         |
-|---------|--------|------------|
-| file_id | string | 文件ID（文件下载） |
-
-#### 请求校验
-
-1. `file_id` 存在
-
-### 响应
-
-```json
-{
-  "status": "ok",
-  "data": {},
-  "message": ""
-}
-```
-
-| 字段名 | 数据类型 | 说明 |
-|-----|------|----|
+<tabs>
+    <tab title="下载成功">
+        <ul>
+            <li>状态码： <strong>200</strong> ；</li>
+            <li>响应主体：文件内容。</li>
+        </ul>
+    </tab>
+    <tab title="下载 ID 不存在">
+        <ul>
+            <li>状态码： <strong>404</strong> ；</li>
+            <li>响应主体：空。</li>
+        </ul>
+    </tab>
+</tabs>
