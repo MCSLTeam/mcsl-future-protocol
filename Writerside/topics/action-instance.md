@@ -12,7 +12,7 @@
 
 ### 响应
 
-- 响应类型：`bin8` | 无响应内容；
+- 响应类型：[`uuid`](models.md#uuid) | 无响应内容；
 - 响应说明：若安装方式为 `pack` 或 `zip`时，返回文件上传 ID，用于使用 [FileUpload](action-system.md#file-download) 上传，30秒后失效并取消安装。
 
 ## RemoveInstance 移除实例 {#remove-instance}
@@ -22,7 +22,7 @@
 
 ### 请求
 
-- 参数类型：`bin8`；
+- 参数类型：[`uuid`](models.md#uuid)；
 - 参数说明：实例 ID。
 
 ### 响应
@@ -36,7 +36,7 @@
 
 ### 请求
 
-- 参数类型：`bin8`；
+- 参数类型：[`uuid`](models.md#uuid)；
 - 参数说明：实例 ID。
 
 ### 响应
@@ -50,7 +50,7 @@
 
 ### 请求
 
-- 参数类型：`bin8`；
+- 参数类型：[`uuid`](models.md#uuid)；
 - 参数说明：实例 ID。
 
 ### 响应
@@ -64,7 +64,7 @@
 
 ### 请求
 
-- 参数类型：`bin8`；
+- 参数类型：[`uuid`](models.md#uuid)；
 - 参数说明：实例 ID。
 
 ### 响应
@@ -74,17 +74,17 @@
 ## ExecuteCmd 执行命令 {#execute-cmd}
 
 - 操作说明：将消息发送到指定实例的 `stdin`；
-- 所需权限：`mcsl.daemon.instance.<实例 ID>.command`。
+- 所需权限：`mcsl.daemon.instance.<实例 ID>.console.write`。
 
 ### 请求
 
 - 参数类型：`map<str, any>`
 - 参数字段：
 
-| 字段  | 数据类型 | 说明               |
-|-----|------|------------------|
-| id  | bin8 | 实例 ID            |
-| msg | str  | 要发送到 `stdin` 的消息 |
+| 字段  | 数据类型                   | 说明               |
+|-----|------------------------|------------------|
+| id  | [uuid](models.md#uuid) | 实例 ID            |
+| msg | str                    | 要发送到 `stdin` 的消息 |
 
 ### 响应
 
@@ -96,7 +96,7 @@
 
 ### 请求
 
-- 参数类型：`bin8`；
+- 参数类型：[`uuid`](models.md#uuid)；
 - 参数说明：实例 ID。
 
 ### 响应
@@ -114,5 +114,5 @@
 
 ### 响应
 
-- 响应类型：<code>map<bin8, [InstanceReport](models.md#instance-report)></code>；
+- 响应类型：<code>map<[uuid](models.md#uuid), [InstanceReport](models.md#instance-report)></code>；
 - 响应说明：所有实例的报告，键为实例 ID。
