@@ -55,26 +55,25 @@
 | name            | str                            | 实例名称                                                     |
 | type            | [InstanceType](#instance-type) | 实例类型                                                     |
 | startup_cmd     | str                            | 服务器启动命令                                                  |
-| arguments       | array&lt;str>                  | Java 参数或可执行文件参数列表，可选，缺省时为空                               |
 | input_encoding  | str                            | `stdin` 编码，可选，缺省时默认为 `UTF-8`                             |
 | output_encoding | str                            | `stdout` 编码，可选，缺省时默认为 `UTF-8`                            |
 | env             | map<str, str>                  | 环境变量，可选，缺省时为空；<br/>可使用 `{NAME}` 占位符，将替换为名为 `NAME` 的环境变量值 |
 
 ### InstanceInstallationInfo 实例安装信息 {#instance-installation-info}
 
-| 字段名             | 数据类型                                      | 说明                                                           |
-|-----------------|-------------------------------------------|--------------------------------------------------------------|
-| name            | str                                       | 实例名称                                                         |
-| type            | `minecraft` &verbar; `other`              | 实例类型：<br/>- `minecraft`： Minecraft JE 实例；<br/>- `other`：其他实例 |
-| startup_cmd     | str                                       | 服务器启动命令                                                      |
-| install_method  | `core` &verbar; `pack` &verbar; `archive` | 实例安装方式                                                       |
-| mc_version      | string                                    | Minecraft JE 版本，非 Minecraft JE 实例或非 `core` 安装方式时忽略           |
-| loader_version  | string                                    | 模组 / 插件端版本，非 Minecraft JE 实例或非 `core` 安装方式时忽略                |
-| mirror          | [Mirror](#mirror)                         | 下载镜像，非 Minecraft JE 实例或非 `core` 安装方式时忽略，可选，缺省时默认使用官方源        |
-| arguments       | array&lt;str>                             | Java 参数或可执行文件参数列表，可选，缺省时为空                                   |
-| input_encoding  | str                                       | `stdin` 编码，可选，缺省时默认为 `UTF-8`                                 |
-| output_encoding | str                                       | `stdout` 编码，可选，缺省时默认为 `UTF-8`                                |
-| env             | map<str, str>                             | 环境变量，可选，缺省时为空；<br/>可使用 `{NAME}` 占位符，将替换为名为 `NAME` 的环境变量值     |
+| 字段名             | 数据类型                                                      | 说明                                                           |
+|-----------------|-----------------------------------------------------------|--------------------------------------------------------------|
+| name            | str                                                       | 实例名称                                                         |
+| type            | `minecraft` &verbar; `other`                              | 实例类型：<br/>- `minecraft`： Minecraft JE 实例；<br/>- `other`：其他实例 |
+| startup_cmd     | str                                                       | 服务器启动命令                                                      |
+| install_method  | [InstanceInstallationMethod](#instance-installation-info) | 实例安装方式                                                       |
+| mc_version      | str                                                       | Minecraft JE 版本，非 Minecraft JE 实例或非 `core` 安装方式时忽略           |
+| loader_version  | str                                                       | 模组 / 插件端版本，非 Minecraft JE 实例或非 `core` 安装方式时忽略                |
+| mirror          | [Mirror](#mirror)                                         | 下载镜像，非 Minecraft JE 实例或非 `core` 安装方式时忽略，可选，缺省时默认使用官方源        |
+| script          | str                                                       | 安装脚本，非 `script` 安装方式时忽略                                      |
+| input_encoding  | str                                                       | `stdin` 编码，可选，缺省时默认为 `UTF-8`                                 |
+| output_encoding | str                                                       | `stdout` 编码，可选，缺省时默认为 `UTF-8`                                |
+| env             | map<str, str>                                             | 环境变量，可选，缺省时为空；<br/>可使用 `{NAME}` 占位符，将替换为名为 `NAME` 的环境变量值     |
 
 ### InstanceReport 实例状态 {#instance-report}
 
@@ -98,11 +97,12 @@
 
 - 数据类型：`str`
 
-| 枚举值  | 说明                                                        | 
-|------|-----------------------------------------------------------|
-| core | 从网络下载核心安装                                                 |
-| pack | 安装 **MCSL Future 服务器包** 文件（`.mcslpack`），可能会覆盖实例工厂设置中的部分字段 | 
-| zip  | 解压归档文件（`.zip`）到实例目录下                                      | 
+| 枚举值    | 说明                                                        | 
+|--------|-----------------------------------------------------------|
+| core   | 从网络下载核心安装                                                 |
+| script | 从网络下载核心安装                                                 |
+| pack   | 安装 **MCSL Future 服务器包** 文件（`.mcslpack`），可能会覆盖实例工厂设置中的部分字段 | 
+| zip    | 解压归档文件（`.zip`）到实例目录下                                      | 
 
 ### InstanceType 实例类型 {#instance-type}
 

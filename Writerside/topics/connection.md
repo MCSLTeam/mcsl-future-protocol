@@ -6,11 +6,11 @@
 
 ### 响应字段
 
-| 字段      | 类型     | 说明                                              |
-|---------|--------|-------------------------------------------------|
-| name    | string | 程序名称，例如 `MCServerLauncher Future Daemon CSharp` |
-| version | string | 程序版本号，如 `1.0.0.0`                               |
-| api     | number | 当前 API 版本，固定为 `1`                               |
+| 字段      | 类型     | 说明                                                                                  |
+|---------|--------|-------------------------------------------------------------------------------------|
+| name    | string | 程序名称，例如 `MCServerLauncher Future Daemon CSharp`                                     |
+| version | string | 程序版本号，如 `1.0.0.0`                                                                   |
+| api     | string | 当前 API 版本，改动见 [Releases](https://github.com/MCSLTeam/mcsl-future-protocol/releases) |
 
 ### 响应示例
 
@@ -18,7 +18,7 @@
 {
   "name": "MCServerLauncher Future Daemon CSharp",
   "version": "1.1.4.5",
-  "api": 1
+  "api": "1.0.0"
 }
 ```
 
@@ -63,6 +63,10 @@
   ]
 }
 ```
+
+### 响应字段
+
+子令牌的字符串。
 
 ## 建立连接
 
