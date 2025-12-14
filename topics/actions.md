@@ -70,4 +70,12 @@
   - `version` - `str`：Java 版本。
   - `vendor` - `str`：Java 供应商，例如 `Oracle Corporation`、`AdoptOpenJDK` 等。
 
-## 
+## 请求上传文件 {#file_upload_request}
+
+## 获取上传进度 {#file_upload_progress}
+
+## 请求下载文件 {#file_download_request}
+
+## 订阅事件 {#subscribe_event}
+
+## 取消订阅事件 {#unsubscribe_event}
