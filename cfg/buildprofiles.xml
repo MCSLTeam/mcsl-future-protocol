@@ -3,5 +3,10 @@
 <buildprofiles xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/build-profiles.xsd"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-    <variables></variables>
+    <variables>
+        <web-root>https://mcslteam.github.io/mcsl-future-protocol/</web-root>
+        <download-page>https://future.mcsl.com.cn/</download-page>
+        <download-title>前往 MCSL Future 官网</download-title>
+        <showDownloadButton>true</showDownloadButton>
+    </variables>
 </buildprofiles>
