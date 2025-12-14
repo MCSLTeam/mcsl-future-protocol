@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/mcsl-future-docs.iml" filepath="$PROJECT_DIR$/.idea/mcsl-future-docs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/mcsl-future-protocol.iml" filepath="$PROJECT_DIR$/.idea/mcsl-future-protocol.iml" />
     </modules>
   </component>
 </project>

@@ -2,17 +2,19 @@
 
 **事件（Event）** 是指由服务器主动向客户端推送的数据消息。
 
+事件使用 MessagePack 格式编码。
+
 ## 事件订阅 {#subscribe}
 
 要接收事件，需先进行订阅。订阅事件通常需要相应权限。
 
-订阅事件请参见：[](action-misc.md#subscribe-event)。
+订阅事件请参见：[](action.md#subscribe-event)。
 
-部分事件在订阅时需提供 **过滤器** 以实现消息筛选，例如 [InstanceLog](event-instance.md#instance-log) 事件需指定实例 ID 作为过滤条件。
+部分事件在订阅时需提供 **过滤器** 以实现消息筛选，例如 [](events.md#instance-log) 事件需指定实例 ID 作为过滤条件。
 
 订阅成功后将返回一个 **监听器 ID**，用于标识该订阅关系，并可用于后续取消订阅。
 
-取消事件订阅请参见：[](action-misc.md#unsubscribe-event)。
+取消事件订阅请参见：[](action.md#unsubscribe-event)。
 
 ## 事件字段
 

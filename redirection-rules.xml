@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rules SYSTEM "https://resources.jetbrains.com/writerside/1.0/redirection-rules.dtd">
+<rules>
+    <!-- format is as follows
+    <rule id="<unique id>">
+        <accepts>page.html</accepts>
+    </rule>
+    -->
+    <rule id="6e2ab986">
+        <description>Created after removal of "系统事件" from MCSL Future Protocol</description>
+        <accepts>event-system.html</accepts>
+    </rule>
+    <rule id="312c28b7">
+        <description>Created after removal of "实例事件" from MCSL Future Protocol</description>
+        <accepts>event-instance.html</accepts>
+    </rule>
+    <rule id="4decf698">
+        <description>Created after removal of "其他事件" from MCSL Future Protocol</description>
+        <accepts>event-misc.html</accepts>
+    </rule>
+    <rule id="609c4156">
+        <description>Created after removal of "系统事件" from MCSL Future Protocol</description>
+        <accepts>event-system.html</accepts>
+    </rule>
+    <rule id="247329f6">
+        <description>Created after removal of "实例事件" from MCSL Future Protocol</description>
+        <accepts>event-instance.html</accepts>
+    </rule>
+    <rule id="7be72c9d">
+        <description>Created after removal of "其他事件" from MCSL Future Protocol</description>
+        <accepts>event-misc.html</accepts>
+    </rule>
+</rules>

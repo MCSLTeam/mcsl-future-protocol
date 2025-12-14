@@ -4,10 +4,4 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
     <variables></variables>
-    <build-profile instance="mcsl-future-protocol">
-        <variables>
-            <noindex-content>false</noindex-content>
-        </variables>
-    </build-profile>
-
 </buildprofiles>

@@ -5,21 +5,17 @@
 <instance-profile id="mcsl-future-protocol"
                   name="MCSL Future Protocol"
                   start-page="introduction.md">
-
     <toc-element topic="introduction.md"/>
-    <toc-element topic="connection.md"/>
     <toc-element topic="permissions.md"/>
+    <toc-element topic="connection.md"/>
+    <toc-element topic="models.md"/>
     <toc-element topic="action.md">
-        <toc-element topic="action-system.md"/>
-        <toc-element topic="action-instance.md"/>
-        <toc-element topic="action-config.md"/>
-        <toc-element topic="action-misc.md"/>
+        <toc-element topic="actions.md"/>
+        <toc-element topic="file-transfer.md"/>
         <toc-element topic="action-errcode.md"/>
     </toc-element>
     <toc-element topic="event.md">
-        <toc-element topic="event-system.md"/>
-        <toc-element topic="event-instance.md"/>
-        <toc-element topic="event-misc.md"/>
+        <toc-element topic="events.md"/>
     </toc-element>
-    <toc-element topic="models.md"/>
+    <toc-element topic="web-user-system.md"/>
 </instance-profile>

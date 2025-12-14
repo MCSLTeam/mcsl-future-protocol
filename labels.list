@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE labels SYSTEM "https://resources.jetbrains.com/writerside/1.0/labels-list.dtd">
+<labels xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://resources.jetbrains.com/writerside/1.0/labels.xsd">
+    <primary-label id="instance-action" name="实例操作" short-name="实例操作" color="blue">
+        与实例相关的操作
+    </primary-label>
+    <primary-label id="file-action" short-name="文件操作" name="文件操作" color="red">
+        与文件相关的操作
+    </primary-label>
+    <primary-label id="resource-action" short-name="资源操作" name="资源操作" color="green">
+        与资源相关的操作
+    </primary-label>
+    <primary-label id="system-action" name="系统操作" short-name="系统操作" color="marine">
+        与系统相关的操作
+    </primary-label>
+
+    <primary-label id="instance-event" name="实例事件" short-name="实例事件" color="blue">
+        与实例相关的事件
+    </primary-label>
+    <primary-label id="system-event" name="系统事件" short-name="系统事件" color="marine">
+        与系统相关的事件
+    </primary-label>
+
+    <secondary-label id="experimental" name="试验性" color="purple">
+        这是一个试验性功能，可能会在未来的版本中被移除或改变。
+    </secondary-label>
+    <secondary-label id="deprecated" name="已弃用" color="tangerine">
+        这是一个已弃用的功能，可能会在未来移除。
+    </secondary-label>
+    <secondary-label id="1.0" name="1.0.x" color="strawberry">新增于 1.0.x 版本</secondary-label>
+</labels>
