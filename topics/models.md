@@ -23,39 +23,39 @@
 <primary-label ref="type-map"/>
 <secondary-label ref="1.0"/>
 
-| 字段名  | 数据类型            | 说明                      |
-|------|-----------------|-------------------------|
-| id   | [`uuid`](#uuid) | 实例 ID                   |
-| path | `str`           | 文件路径，表示实例下的相对路径，Unix 风格 |
+| 字段名      | 数据类型            | 说明                      |
+|----------|-----------------|-------------------------|
+| instance | [`uuid`](#uuid) | 实例 ID                   |
+| path     | `str`           | 文件路径，表示实例下的相对路径，Unix 风格 |
 
 ## FileData 文件数据 {#file-data}
 
 <primary-label ref="type-map"/>
 <secondary-label ref="1.0"/>
 
-| 字段名        | 数据类型                     | 说明                                    |
-|------------|--------------------------|---------------------------------------|
-| path       | [`FilePath`](#file_path) | 文件路径                                  |
-| type       | `str`                    | 文件类型，始终为 `file`                       |
-| created    | `str`                    | 创建时间，ISO-8601                         |
-| modified   | `str`                    | 上次修改时间，ISO-8601                       |
-| size       | `int64`                  | 文件大小，单位为字节                            |
-| permission | `str` &verbar; 无         | 文件权限，仅在 Unix-like 系统中存在，数字格式，例如 `755` |
+| 字段名               | 数据类型                     | 说明                                    |
+|-------------------|--------------------------|---------------------------------------|
+| path              | [`FilePath`](#file_path) | 文件路径                                  |
+| type              | `str`                    | 文件类型，始终为 `file`                       |
+| creation_time     | `timestamp32`            | 创建时间                                  |
+| modification_time | `timestamp32`            | 上次修改时间                                |
+| permission        | `str` &verbar; 无         | 文件权限，仅在 Unix-like 系统中存在，数字格式，例如 `755` |
+| size              | `int64`                  | 文件大小，单位为字节                            |
 
 ## DirectoryData 目录元数据 {#directory_data}
 
 <primary-label ref="type-map"/>
 <secondary-label ref="1.0"/>
 
-| 字段名        | 数据类型                                                   | 说明                                          |
-|------------|--------------------------------------------------------|---------------------------------------------|
-| path       | [`FilePath`](#file_path)                               | 文件路径                                        |
-| type       | `str`                                                  | 文件类型，始终为 `directory`                        |
-| created    | `str`                                                  | 创建时间，ISO-8601                               |
-| modified   | `str`                                                  | 上次修改时间，ISO-8601                             |
-| permission | `str` &verbar; 无                                       | 文件权限，仅在 Unix-like 系统中存在，数字格式，例如 `755`       |
-| hidden     | `bool`                                                 | 是否为隐藏目录                                     |
-| link       | [`FilePath`](#file_path) &verbar; `str` &verbar; `nil` | 符号链接目标路径，如果不在守护进程中则为 `str`，如果没有符号链接则为 `nil` |
+| 字段名               | 数据类型                                                   | 说明                                          |
+|-------------------|--------------------------------------------------------|---------------------------------------------|
+| path              | [`FilePath`](#file_path)                               | 文件路径                                        |
+| type              | `str`                                                  | 文件类型，始终为 `directory`                        |
+| creation_time     | `timestamp32`                                          | 创建时间                                        |
+| modification_time | `timestamp32`                                          | 上次修改时间                                      |
+| permission        | `str` &verbar; 无                                       | 文件权限，仅在 Unix-like 系统中存在，数字格式，例如 `755`       |
+| hidden            | `bool`                                                 | 是否为隐藏目录                                     |
+| link_target       | [`FilePath`](#file_path) &verbar; `str` &verbar; `nil` | 符号链接目标路径，如果不在守护进程中则为 `str`，如果没有符号链接则为 `nil` |
 
 ## InstanceBasicInfo 实例基本信息 {#instance_basic_info}
 
@@ -77,32 +77,57 @@
 | type           | [`Core`](model-cores.md) | 实例类型             |
 | core_version   | `str`                    | 核心版本             |
 | loader_version | `str` &verbar; 无         | 加载器版本，仅存在于第三方服务端 |
+| mirror         | [`Mirror`](#mirror)      | 镜像源              |
 
-## InstanceSettings 实例设置 {#instance_settings}
+## InstanceConfig 实例配置 {#instance_config}
 
 <primary-label ref="type-map"/>
 <secondary-label ref="1.0"/>
 
-| 字段名            | 数据类型                    | 说明     |
-|----------------|-------------------------|--------|
-| startCommand   | `str`                   | 启动命令   |
-| stopCommand    | `str`                   | 停止命令   |
-| stdinEncoding  | [`Encoding`](#encoding) | 标准输入编码 |
-| stdoutEncoding | [`Encoding`](#encoding) | 标准输出编码 |
-| env            | `map<str, str>`         | 环境变量   |
+| 字段名             | 数据类型                    | 说明                                             |
+|-----------------|-------------------------|------------------------------------------------|
+| startup_cmd     | `str`                   | 启动命令                                           |
+| stop_cmd        | `str`                   | 停止命令                                           |
+| input_encoding  | [`Encoding`](#encoding) | 标准输入编码                                         |
+| output_encoding | [`Encoding`](#encoding) | 标准输出编码                                         |
+| env             | `map<str, str>`         | 环境变量<br/>可使用 `{NAME}` 占位符，将替换为名为 `NAME` 的环境变量值 |
 
 ## InstanceStatusInfo 实例运行状态信息 {#instance_status_info}
 
 <primary-label ref="type-map"/>
 <secondary-label ref="1.0"/>
 
-| 字段名         | 数据类型                                 | 说明                  |
-|-------------|--------------------------------------|---------------------|
-| status      | [`InstanceStatus`](#instance_status) | 实例状态                |
-| pid         | `int32`                              | 进程 ID               |
-| cpuUsage    | `float32`                            | CPU 占用率，0-100 之间的整数 |
-| memoryUsage | `int64`                              | 内存占用率，单位为字节         |
-| diskUsage   | `int64`                              | 磁盘占用率，单位为字节         |
+| 字段名          | 数据类型                                 | 说明                                 |
+|--------------|--------------------------------------|------------------------------------|
+| status       | [`InstanceStatus`](#instance_status) | 实例状态                               |
+| pid          | `int32` &verbar; `nil`               | 进程 ID，若实例未运行则为 `nil`               |
+| cpu_usage    | `float32` &verbar; `nil`             | CPU 占用率，0-100 之间的整数，若实例未运行则为 `nil` | |
+| memory_usage | `int64` &verbar; `nil`               | 内存占用率，单位为字节，若实例未运行则为 `nil`         |         |
+| disk_usage   | `int64`                              | 磁盘占用率，单位为字节                        |
+
+## MCServerPing 服务器信息 {#mc_server_ping}
+
+<primary-label ref="type-map"/>
+<secondary-label ref="1.0"/>
+
+| 字段            | 数据类型                                 | 说明                                                                                                                          |
+|---------------|--------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| name          | `str`                                | Minecraft 版本名称                                                                                                              |
+| protocol      | `int32`                              | Minecraft 协议版本                                                                                                              |
+| online_player | `int32`                              | 在线玩家数量                                                                                                                      |
+| max_player    | `int32`                              | 最大玩家数量                                                                                                                      |
+| motd          | `str`                                | 服务器介绍                                                                                                                       |
+| players       | list<[Player](#player)> &verbar; nil | 在线玩家列表，1.7之前的版本由于 [SLP协议](https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Server_List_Ping) 没有玩家列表字段，为 `nil` |
+
+## Player 玩家信息 {#player}
+
+<primary-label ref="type-map"/>
+<secondary-label ref="1.0"/>
+
+| 字段   | 数据类型                     | 说明      |
+|------|--------------------------|---------|
+| name | `str`                    | 玩家名称    |
+| uuid | [`uuid`](models.md#uuid) | 玩家 UUID |
 
 ## InstanceStatus 实例运行状态 {#instance_status}
 
@@ -131,6 +156,18 @@
 |------|----------|
 | utf8 | UTF-8 编码 |
 | gbk  | GBK 编码   |
+
+### Mirror 镜像类型 {#mirror}
+
+<primary-label ref="type-enum"/>
+<secondary-label ref="1.0"/>
+
+- 数据类型：`str`
+
+| 枚举值     | 说明                                             |
+|---------|------------------------------------------------|
+| vanilla | 官方源                                            |
+| bmcl    | [BMCL Api](https://bmclapidoc.bangbang93.com/) |
 
 ## 核心类型
 
