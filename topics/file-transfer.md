@@ -1,6 +1,6 @@
 # 文件传输
 
-MCSL Future 通讯协议中，文件上下传采用 `WebSocket` 和 `HTTP` 协议同时使用的方法。
+MCSL Future 通讯协议中，文件上下传采用 **WebSocket** 和 **HTTP** 协议同时使用的方法。
 
 故本文将详细地介绍文件上下传的请求方法。
 
@@ -13,7 +13,7 @@ sequenceDiagram
     客户端 ->> 守护进程（WS Server）: 请求上传文件
     守护进程（WS Server） -->> 客户端: 返回上传 ID
     守护进程（WS Server） -->> 守护进程（HTTP Server）: 创建上传任务
-    客户端 ->> 守护进程（HTTP Server）: 通过包含上传 ID 的 URL 使用 `POST` 请求上传文件数据
+    客户端 ->> 守护进程（HTTP Server）: 通过包含上传 ID 的 URL 使用 POST 请求上传文件数据
     客户端 ->> 守护进程（WS Server）: 获取上传进度
     守护进程（WS Server） -->> 客户端: 返回上传进度
 ```
@@ -23,7 +23,7 @@ sequenceDiagram
 * 客户端向守护进程发送 [`file_upload_request` 操作](actions.md#file_upload_request)，包含文件信息和保存路径等。
 * 守护进程返回上传 ID。
 * 上传 ID 如果在 30s 内没有被使用，将被自动删除。
-* 上传 ID 在使用后将被删除。
+* 上传 ID 在 HTTP 连接打开后将被删除。
 
 ### <![CDATA[STEP 2 - 上传文件数据]]>
 
@@ -53,7 +53,7 @@ sequenceDiagram
     客户端 ->> 守护进程（WS Server）: 请求下载文件
     守护进程（WS Server） -->> 客户端: 返回下载 ID
     守护进程（WS Server） -->> 守护进程（HTTP Server）: 创建下载任务
-    客户端 ->> 守护进程（HTTP Server）: 通过包含下载 ID 的 URL 使用 `GET` 请求下载文件数据
+    客户端 ->> 守护进程（HTTP Server）: 通过包含下载 ID 的 URL 使用 GET 请求下载文件数据
 ```
 
 ### <![CDATA[STEP 1 - 请求下载文件]]>
@@ -61,7 +61,7 @@ sequenceDiagram
 * 客户端向守护进程发送 [`file_download_request` 操作](actions.md#file_download_request)，包含文件路径等。
 * 守护进程返回下载 ID。
 * 下载 ID 如果在 30s 内没有被使用，将被自动删除。
-* 下载 ID 在使用后将被删除。
+* 下载 ID 在 HTTP 连接打开后将被删除。
 
 ### <![CDATA[STEP 2 - 下载文件数据]]>
 

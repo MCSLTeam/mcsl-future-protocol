@@ -36,7 +36,7 @@
     - `other_used` - `u64`：其他应用已用磁盘空间，单位为字节。
     - `mount_point` - `str`：磁盘挂载点，在 Windows 上为 `C:\` 等。
 
-## 获取已安装的 Java 环境 {#get_java_info}
+## 获取 Java 环境 {#get_java_info}
 
 <primary-label ref="system-action"/>
 <secondary-label ref="1.0"/>
@@ -58,7 +58,7 @@
 
 ### 请求 {collapsible="true"}
 
-- **参数类型**：`boolean`
+- **参数类型**：`bool`
 - **参数说明**：是否深度搜索。
 
 ### 响应 {collapsible="true"}
