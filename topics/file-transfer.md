@@ -13,27 +13,36 @@ sequenceDiagram
     客户端 ->> 守护进程（WS Server）: 请求上传文件
     守护进程（WS Server） -->> 客户端: 返回上传 ID
     守护进程（WS Server） -->> 守护进程（HTTP Server）: 创建上传任务
-    客户端 ->> 守护进程（HTTP Server）: 通过包含上传 ID 的 URL 使用 POST 请求上传文件数据
-    客户端 ->> 守护进程（WS Server）: 获取上传进度
-    守护进程（WS Server） -->> 客户端: 返回上传进度
+    loop 上传文件
+        客户端 ->> 守护进程（HTTP Server）: 通过包含上传 ID 的 URL 分片上传文件数据
+        守护进程（HTTP Server） -->> 客户端: 返回缺失的分片索引
+    end
+    loop 获取进度
+        客户端 ->> 守护进程（WS Server）: 获取上传进度
+        守护进程（WS Server） -->> 客户端: 返回上传进度
+    end
 ```
 
 ### <![CDATA[STEP 1 - 请求上传文件]]>
 
-* 客户端向守护进程发送 [`file_upload_request` 操作](actions.md#file_upload_request)，包含文件信息和保存路径等。
-* 守护进程返回上传 ID。
-* 上传 ID 如果在 30s 内没有被使用，将被自动删除。
-* 上传 ID 在 HTTP 连接打开后将被删除。
+- 客户端向守护进程发送 [`file_upload_request` 操作](actions.md#file_upload_request)，包含文件信息和保存路径等。
+- 守护进程返回上传 ID。
+- 上传 ID 如果间隔 30s 以上没有被使用（从连接断开到下一次连接），将被自动删除，并取消上传。
 
 ### <![CDATA[STEP 2 - 上传文件数据]]>
 
-* 客户端向 `http(s)://<守护进程地址>/upload/<上传 ID>` 发起 **POST** 请求，并使用 `multipart/form-data` 格式上传文件数据。
-* 守护进程收到请求后，将文件数据保存到文件中。
+- 客户端向 `http(s)://<守护进程地址>/upload/<上传 ID>` 发起请求。
+    - 请求方法为 **POST**；
+    - 请求头包含 `Content-Index`，表示当前分片第一个字节的索引；
+    - 请求体直接为文件的数据。
+- 守护进程收到请求后，将文件数据保存到文件中，并返回 **200 OK**。
+    - 返回包含响应头 `Range`，格式为 `<分片第一个字节索引>-<分片最后一个字节索引>;<开始索引>-<结束索引>;...`，表示缺失的分片索引。
+- 客户端根据缺失分片索引，继续发起请求上传分片。
 
 ### <![CDATA[STEP 3 - 获取上传进度]]>
 
-* 在文件上传过程中，客户端向守护进程发送 [`file_upload_progress` 操作](actions.md#file_upload_progress)，包含上传 ID。
-* 守护进程返回上传进度
+- 在文件上传过程中，客户端向守护进程发送 [`file_upload_progress` 操作](actions.md#file_upload_progress)，包含上传 ID。
+- 守护进程返回上传进度
 
 ### 其他
 
@@ -60,10 +69,18 @@ sequenceDiagram
 
 * 客户端向守护进程发送 [`file_download_request` 操作](actions.md#file_download_request)，包含文件路径等。
 * 守护进程返回下载 ID。
-* 下载 ID 如果在 30s 内没有被使用，将被自动删除。
-* 下载 ID 在 HTTP 连接打开后将被删除。
+* 下载 ID 如果在 30s 内没有被使用（从连接断开到下一次连接），将被自动删除。
 
 ### <![CDATA[STEP 2 - 下载文件数据]]>
 
-* 客户端向 `http(s)://<守护进程地址>/download/<下载 ID>` 发起 **GET** 请求，即可下载文件数据。
-* 守护进程收到请求后，将文件数据返回给客户端。
+#### 全部下载
+
+- 客户端向 `http(s)://<守护进程地址>/download/<下载 ID>` 发起 **GET** 请求，即可下载文件数据。
+- 守护进程收到请求后，将文件数据返回给客户端，响应为 **200 OK**。
+
+#### 分片下载
+
+- 客户端向 `http(s)://<守护进程地址>/download/<下载 ID>` 发起 **HEAD** 请求。
+- 守护进程返回数据，响应为 **200 OK**，客户端可通过 `Content-Length` 标头获取文件大小。
+- 客户端向 `http(s)://<守护进程地址>/download/<下载 ID>` 发起 **GET** 请求，包含 `Range` 标头，即可下载文件数据的指定分片。
+- 守护进程收到请求后，将文件数据返回给客户端，响应为 **206 Partial Content**。
