@@ -28,6 +28,7 @@ sequenceDiagram
 - 客户端向守护进程发送 [`file_upload_request` 操作](actions.md#file_upload_request)，包含文件信息和保存路径等。
 - 守护进程返回上传 ID。
 - 上传 ID 如果间隔 30s 以上没有被使用（从连接断开到下一次连接），将被自动删除，并取消上传。
+- WebSocket 连接断开后，上传 ID 将被自动删除，并取消上传。
 
 ### <![CDATA[STEP 2 - 上传文件数据]]>
 
@@ -42,7 +43,7 @@ sequenceDiagram
 ### <![CDATA[STEP 3 - 获取上传进度]]>
 
 - 在文件上传过程中，客户端向守护进程发送 [`file_upload_progress` 操作](actions.md#file_upload_progress)，包含上传 ID。
-- 守护进程返回上传进度
+- 守护进程返回上传进度。
 
 ### 其他
 
@@ -67,9 +68,10 @@ sequenceDiagram
 
 ### <![CDATA[STEP 1 - 请求下载文件]]>
 
-* 客户端向守护进程发送 [`file_download_request` 操作](actions.md#file_download_request)，包含文件路径等。
-* 守护进程返回下载 ID。
-* 下载 ID 如果在 30s 内没有被使用（从连接断开到下一次连接），将被自动删除。
+- 客户端向守护进程发送 [`file_download_request` 操作](actions.md#file_download_request)，包含文件路径等。
+- 守护进程返回下载 ID。
+- 下载 ID 如果在 30s 内没有被使用（从连接断开到下一次连接），将被自动删除。
+- WebSocket 连接断开后，下载 ID 将被自动删除。
 
 ### <![CDATA[STEP 2 - 下载文件数据]]>
 
