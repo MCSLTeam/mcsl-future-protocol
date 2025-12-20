@@ -28,6 +28,8 @@ sequenceDiagram
 
 ### <![CDATA[STEP 2 - 上传文件数据]]>
 
+请注意此处的标头为自定义标头，名称格式等不遵循 HTTP 标准规范。
+
 - 客户端向 `http(s)://<守护进程地址>/upload/<上传 ID>` 发起请求。
     - 请求方法为 **POST**；
     - 请求头包含 `Content-Index`，表示当前分片第一个字节的索引；
@@ -77,3 +79,5 @@ sequenceDiagram
 - 守护进程返回数据，响应为 **200 OK**，客户端可通过 `Content-Length` 标头获取文件大小。
 - 客户端向 `http(s)://<守护进程地址>/download/<下载 ID>` 发起 **GET** 请求，包含 `Range` 标头，即可下载文件数据的指定分片。
 - 守护进程收到请求后，将文件数据返回给客户端，响应为 **206 Partial Content**。
+
+详见 [HTTP 范围请求](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Guides/Range_requests)。
