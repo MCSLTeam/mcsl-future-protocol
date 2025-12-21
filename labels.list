@@ -32,6 +32,12 @@
         Msgpack 扩展类型
     </primary-label>
 
+    <secondary-label id="windows" name="Windows" color="green">
+        仅在 Windows 系统上可用
+    </secondary-label>
+    <secondary-label id="unix" name="Unix-like" color="green">
+        仅在 macOS 和 Linux 系统上可用
+    </secondary-label>
     <secondary-label id="experimental" name="试验性" color="purple">
         这是一个试验性功能，可能会在未来的版本中被移除或改变。
     </secondary-label>

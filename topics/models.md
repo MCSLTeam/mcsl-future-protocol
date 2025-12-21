@@ -28,7 +28,7 @@
 | instance | [`uuid`](#uuid) | 实例 ID                   |
 | path     | `str`           | 文件路径，表示实例下的相对路径，Unix 风格 |
 
-## FileData 文件数据 {#file-data}
+## FileData 文件数据 {#file_data}
 
 <primary-label ref="type-map"/>
 <secondary-label ref="1.0"/>
@@ -157,7 +157,7 @@
 | utf8 | UTF-8 编码 |
 | gbk  | GBK 编码   |
 
-### Mirror 镜像类型 {#mirror}
+## Mirror 镜像类型 {#mirror}
 
 <primary-label ref="type-enum"/>
 <secondary-label ref="1.0"/>
@@ -169,9 +169,33 @@
 | vanilla | 官方源                                            |
 | bmcl    | [BMCL Api](https://bmclapidoc.bangbang93.com/) |
 
+## CompressionType 压缩类型 {#compression_type}
+
+<primary-label ref="type-enum"/>
+<secondary-label ref="1.0"/>
+
+- **数据类型**：`str`
+
+| 枚举值    | 说明        |
+|--------|-----------|
+| zip    | ZIP 压缩    |
+| tar.gz | TAR.GZ 压缩 |
+
 ## 核心类型
 
 <primary-label ref="type-enum"/>
 <secondary-label ref="1.0"/>
 
-见 [](model-cores.md)。
+* **枚举类型**：`str`
+
+只有一些安装时需要特殊处理的核心才会出现在这个枚举中。
+
+| 枚举值       | 说明                        |
+|-----------|---------------------------|
+| mcje      | 任何 Minecraft JE 核心，非群组端   |
+| fabric    | Minecraft JE Fabric 核心    |
+| forge     | Minecraft JE Forge 核心     |
+| neoforge  | Minecraft JE NeoForge 核心  |
+| quilt     | Minecraft JE Quilt 核心     |
+| cleanroom | Minecraft JE Cleanroom 核心 |
+| other     | 其他核心类型                    |
