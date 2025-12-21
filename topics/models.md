@@ -74,7 +74,7 @@
 
 | 字段名            | 数据类型                     | 说明               |
 |----------------|--------------------------|------------------|
-| type           | [`Core`](model-cores.md) | 实例类型             |
+| type           | [`CoreType`](#core_type) | 实例类型             |
 | core_version   | `str`                    | 核心版本             |
 | loader_version | `str` &verbar; 无         | 加载器版本，仅存在于第三方服务端 |
 | mirror         | [`Mirror`](#mirror)      | 镜像源              |
@@ -181,7 +181,7 @@
 | zip    | ZIP 压缩    |
 | tar.gz | TAR.GZ 压缩 |
 
-## 核心类型
+## CoreType 核心类型 {#core_type}
 
 <primary-label ref="type-enum"/>
 <secondary-label ref="1.0"/>
