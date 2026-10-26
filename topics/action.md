@@ -1,71 +1,43 @@
-# Action
+# JSON-RPC 请求与响应
 
-**Action** 是 client 主动发起的 JSON RPC 请求。daemon 收到请求后执行对应 handler，并返回同一个 `id` 的响应。
+V2 使用 JSON-RPC 2.0，不使用旧 action/retcode envelope。每条请求是一个 JSON object，method 名称直接来自 frozen catalog，不从 C# enum 名称推导。
 
-## 请求字段
-
-| 字段 | 数据类型 | 说明 |
-| --- | --- | --- |
-| `action` | string | action 名称，使用 snake_case，例如 `get_system_info` |
-| `params` | object \| null | action 参数。无参数时通常使用 `{}` |
-| `id` | uuid string | 请求编号。响应中的 `id` 与请求一致 |
-
-### 请求示例
+## 请求
 
 ```json
 {
-  "action": "ping",
-  "params": {},
-  "id": "11111111-1111-1111-1111-111111111111"
+  "jsonrpc": "2.0",
+  "id": "request-1",
+  "method": "mcsl.system.info.get",
+  "params": {}
 }
 ```
 
-## 响应字段
+- `jsonrpc` 必须为 `"2.0"`。
+- `id` 使用 string 或有符号 Int64 整数；不要发送 null、小数或指数形式的 ID。浏览器客户端宜使用字符串，避免 JavaScript number 精度损失。
+- `method` 必须在当前 catalog 中注册。
+- `params` 使用该 method schema 定义的 JSON object；无参数请求使用 `{}`，不使用位置参数数组。
 
-| 字段 | 数据类型 | 说明 |
-| --- | --- | --- |
-| `status` | string | 请求状态，当前使用 `ok` 或 `error` |
-| `retcode` | int | 返回码，见 [](action-errcode.md) |
-| `data` | object \| null | action 结果数据。失败时通常为 `null` |
-| `message` | string | 返回码消息，可能包含补充错误文本 |
-| `id` | uuid string | 请求编号，与请求中的 `id` 一致 |
+内置 RPC descriptor 不允许客户端 notification 调用，应始终携带 `id`。不要把 JSON-RPC 规范中可选的 batch/notification 能力推定为该 daemon profile 已支持；准入插件的调用能力也以 catalog metadata 为准。
 
-### 成功响应示例
+## 成功响应
+
+响应带相同 `id` 和 `result`，不再包含 `status`、`retcode` 或旧顶层 `data`。以 ping 为例：
 
 ```json
 {
-  "status": "ok",
-  "retcode": 0,
-  "data": {
-    "time": 1717171717171
-  },
-  "message": "OK",
-  "id": "11111111-1111-1111-1111-111111111111"
+  "jsonrpc": "2.0",
+  "id": "ping-1",
+  "result": {
+    "time": 1717171717000
+  }
 }
 ```
 
-### 失败响应示例
+`result` 的结构由对应 method schema 决定。客户端必须区分成功响应、错误响应、无 `id` 的 event notification 和 upload acknowledgement，不能只按接收顺序匹配请求。
 
-```json
-{
-  "status": "error",
-  "retcode": 10002,
-  "data": null,
-  "message": "Unknown Action",
-  "id": "11111111-1111-1111-1111-111111111111"
-}
-```
+## 错误响应
 
-## 命名规则
+失败使用 JSON-RPC `error`，包含数字 `code`、`message` 和结构化 `data`；解析或无效请求错误可能无法关联有效 `id`。字段和错误分类见 [](action-errcode.md)。
 
-C# 中的 `ActionType` enum 通过 JSON snake_case converter 进入 wire format。
-
-| C# 名称 | JSON 名称 |
-| --- | --- |
-| `GetSystemInfo` | `get_system_info` |
-| `FileUploadRequest` | `file_upload_request` |
-| `UpdateInstanceSettings` | `update_instance_settings` |
-
-## 权限
-
-每个 action handler 声明一个权限节点。权限值为 `*` 时表示当前 handler 接受任意已连接客户端。权限匹配规则见 [](permissions.md)。
+完整方法发现见 [](actions.md)，服务端事件见 [](event.md)。

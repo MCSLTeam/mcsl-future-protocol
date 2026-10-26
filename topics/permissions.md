@@ -1,84 +1,30 @@
 # 权限
 
-**权限（Permission）** 用于限制 WebSocket 连接可调用的 action。daemon 在 action handler 上声明所需权限，并用当前连接 token 中的权限集合进行匹配。
+每个 RPC/event descriptor 在 frozen typed catalog 中声明 permission。`*` 表示任意已认证连接；其他值必须由当前 token 的 permission 集合满足。实际权限 metadata 随 `rpc.discover` 导出，见 [](actions.md)，不从旧 action 名称或页面目录推导。
 
-## 权限字符串
+## 校验边界
 
-单个权限由多个节点组成，节点之间用 `.` 分隔。
+daemon 在执行 application method、建立 subscription 和创建 file/console session 前进行权威校验。前端或外部控制面的预检查仅用于交互，不能替代 daemon-side permission、路径、instance lifecycle 和 session ownership 校验。
 
-示例：
+事件订阅不仅受目标 event 的 permission 约束，还需要调用者具备订阅 RPC 本身的权限。event meta 也必须符合 catalog 的 presence/schema 规则。
 
-```text
-mcsl.daemon.java_list
-mcsl.daemon.file.download
-mcsl.daemon.file.move.file
+## 查询当前权限
+
+具有 `mcsl.auth.permissions.get` 权限的连接可调用：
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": "permissions-1",
+  "method": "mcsl.auth.permissions.get",
+  "params": {}
+}
 ```
 
-子令牌申请接口中的 `permissions` 字段是逗号分隔字符串：
+返回结果中的 `permissions` 描述当前连接的权限；它不是绕过其他 method 检查的能力。
 
-```text
-mcsl.daemon.java_list,mcsl.daemon.file.download
-```
+## 主令牌与子令牌
 
-## 节点字符
+主令牌属于 daemon 管理信任边界，不应传入普通租户浏览器、日志或诊断包。外部用户系统可按 [](web-user-system.md) 使用主令牌签发受限短期 JWT。
 
-当前实现接受大小写字母、连字符、下划线，以及通配符节点 `*` 和 `**`。
-
-## 匹配规则
-
-### 完全匹配
-
-连接拥有的权限与 handler 要求权限相同时匹配。
-
-```text
-拥有: mcsl.daemon.java_list
-需要: mcsl.daemon.java_list
-```
-
-### 父节点匹配子节点
-
-拥有的权限是需要权限的父节点时匹配。
-
-```text
-拥有: mcsl.daemon.file
-需要: mcsl.daemon.file.download
-```
-
-### 单节点通配符 `*`
-
-`*` 匹配一个节点。
-
-```text
-拥有: mcsl.daemon.file.*
-需要: mcsl.daemon.file.download
-```
-
-### 多节点通配符 `**`
-
-`**` 匹配一个或多个节点。
-
-```text
-拥有: mcsl.daemon.**.download
-需要: mcsl.daemon.file.download
-```
-
-## Handler 权限
-
-当前部分 handler 声明为 `*`，表示任意已连接 client 均可调用。其他 handler 使用具体权限节点，例如：
-
-| 权限 | 用途 |
-| --- | --- |
-| `mcsl.daemon.java_list` | 获取 Java 列表 |
-| `mcsl.daemon.file.upload` | 文件上传 |
-| `mcsl.daemon.file.download` | 文件下载 |
-| `mcsl.daemon.file.info.file` | 获取文件信息 |
-| `mcsl.daemon.file.info.directory` | 获取目录信息 |
-| `mcsl.daemon.file.delete.file` | 删除文件 |
-| `mcsl.daemon.file.delete.directory` | 删除目录 |
-| `mcsl.daemon.file.rename.file` | 重命名文件 |
-| `mcsl.daemon.file.rename.directory` | 重命名目录 |
-| `mcsl.daemon.file.create.directory` | 创建目录 |
-| `mcsl.daemon.file.move.file` | 移动文件 |
-| `mcsl.daemon.file.move.directory` | 移动目录 |
-| `mcsl.daemon.file.copy.file` | 复制文件 |
-| `mcsl.daemon.file.copy.directory` | 复制目录 |
+签发需要额外的 daemon 配置允许、主令牌身份和 `mcsl.auth.token.issue` 权限。子令牌只能缩小 capability，不等于提供租户隔离或操作系统沙箱。不能根据旧文档中宽泛的 handler 权限推断当前 RPC 可调用。

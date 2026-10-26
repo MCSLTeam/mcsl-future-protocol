@@ -1,55 +1,49 @@
-# 文件传输
+# 文件与控制台二进制传输
 
-当前 C# daemon 没有实现 `/upload/<id>` 或 `/download/<id>` HTTP 文件传输接口。文件传输走 WebSocket action，上传还支持 WebSocket binary frame 快路径。
+V2 文件控制使用 `mcsl.file.*` JSON-RPC method，内容使用同一 WebSocket 连接上的版本化 binary frame。它不使用旧 Base64 chunk action、SHA-1 上传帧或独立 HTTP 上传/下载 endpoint。
 
-## 上传流程 {#file_upload}
+单个 session 属于创建它的连接和权限快照。daemon 负责路径边界、offset、长度、SHA-256、超时和清理校验；连接重建后旧 session 不恢复。参数及结果字段以 [](actions.md) 中的 schema 为准。
 
-1. client 调用 [`file_upload_request`](actions.md#file_upload_request)，传入目标路径、大小、可选 SHA-1 和超时。
-2. daemon 预分配 `<path>.tmp` 文件并返回 `file_id`。
-3. client 使用 [`file_upload_chunk`](actions.md#file_upload_chunk) 发送 Base64 分片，或使用二进制上传 frame。
-4. daemon 写入分片并返回 `done` 和 `received`。
-5. 全部分片收到后，daemon 校验 SHA-1。通过后将 `.tmp` 文件移动为目标文件。
-6. client 可使用 [`file_upload_cancel`](actions.md#file_upload_cancel) 取消上传。
+## 上传
 
-## JSON 分片上传
+1. 调用 `mcsl.file.upload.open`，提供 daemon-relative path、长度和可选 SHA-256，取得 session ID、chunk 上限和 expiry。
+2. 使用 `UploadChunk` binary frame 顺序发送内容；daemon 通过 `mcsl.file.upload.ack` notification 确认 accepted/rejected。
+3. 调用 `mcsl.file.upload.close` 完成校验并原子提交，或调用 `mcsl.file.upload.cancel` 清理 staging 文件。
 
-`file_upload_chunk` 的 `data` 字段是 Base64 字符串。适合普通 JSON RPC 调用，但会产生额外编码开销。
+ack 的 `params` 包含 session ID、offset、length、status，以及拒绝时的结构化 error。它是 connection-owned 控制消息，不要求 event subscription，也不等同于最终文件提交成功。
 
-```json
-{
-  "action": "file_upload_chunk",
-  "params": {
-    "file_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
-    "offset": 0,
-    "data": "SGVsbG8="
-  },
-  "id": "11111111-1111-1111-1111-111111111111"
-}
-```
+## 下载
 
-## 二进制上传 frame
+1. 调用 `mcsl.file.download.open`，取得 session ID、长度、SHA-256、chunk 上限和 expiry。
+2. 调用 `mcsl.file.download.read`；JSON-RPC result 描述 session、offset、length、final，内容紧随为 `DownloadChunk` binary frame。
+3. 调用 `mcsl.file.download.close` 释放 session。
 
-`MCServerLauncher.DaemonClient` 还支持直接发送 WebSocket binary frame。frame 格式如下：
+客户端应验证 RPC metadata 与收到的 binary frame 相匹配，不把原始字节解释为文本或旧 BigEndianUnicode 字符串。
 
-```text
-[16 bytes file_id][8 bytes offset][20 bytes SHA1(data)][data bytes]
-```
+## Binary header
 
-- `file_id` 是上传会话 ID 的 16 字节 UUID。
-- `offset` 是分片偏移。
-- `SHA1(data)` 是当前分片内容的 SHA-1。
-- `data bytes` 是原始分片内容。
+固定 header 为 **32 bytes**，之后紧跟 payload：
 
-binary frame 的响应由 daemon 返回二进制上传响应，daemon client 会把它映射为 `(done, received)`。
+| 字节偏移 | 长度 | 含义 |
+| --- | --- | --- |
+| 0 | 1 | binary codec version，当前为 `1` |
+| 1 | 1 | kind |
+| 2 | 2 | reserved，必须全部为零 |
+| 4 | 16 | session UUID，big-endian GUID 字节序 |
+| 20 | 8 | 非负 offset，signed Int64 little-endian |
+| 28 | 4 | payload length，UInt32 little-endian |
 
-## 下载流程 {#file_download}
+| Kind | 值 | 方向 |
+| --- | --- | --- |
+| `UploadChunk` | 1 | client → daemon |
+| `DownloadChunk` | 2 | daemon → client |
+| `ConsoleInput` | 3 | client → daemon |
+| `ConsoleOutput` | 4 | daemon → client |
 
-1. client 调用 [`file_download_request`](actions.md#file_download_request)，传入 daemon 侧文件路径。
-2. daemon 打开文件，返回 `file_id`, `size`, `sha1`。
-3. client 调用 [`file_download_range`](actions.md#file_download_range)，传入 `file_id` 和 `<from>..<to>` 范围。
-4. daemon 返回 `content` 字符串。
-5. client 调用 [`file_download_close`](actions.md#file_download_close) 关闭会话。
+默认最大 payload chunk 为 1 MiB；应遵守 session 返回的限制。未知 version/kind、非零 reserved、空 session UUID、负 offset、长度不匹配或超限的帧会被拒绝。这里的 header version `1` 是 V2 内的 binary codec 版本，不是 daemon V1 协议。
 
-## 会话超时
+## 控制台
 
-上传和下载会话默认超时时间由 daemon 文件会话逻辑管理，当前默认约为 30 分钟。请求参数中的 `timeout` 使用毫秒数。
+通过 `mcsl.instance.console.open`、`mcsl.instance.console.resize` 和 `mcsl.instance.console.close` 管理控制台 session；输入输出复用上述 header，分别使用 `ConsoleInput` 和 `ConsoleOutput`。session 仍由创建它的连接及 daemon 权限校验约束。
+
+字节编码以 Common 的 `Contracts/Protocol/BinaryFrameContracts.cs` 为准，不使用 .NET Guid 的默认混合端序布局。

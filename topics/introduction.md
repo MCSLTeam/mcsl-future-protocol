@@ -1,30 +1,30 @@
-# MCSL Future 通信协议
+# MCSL Future V2 通信协议
 
-**MCSL Future 通信协议（MCSL Future Protocol，简称 MFP）** 描述 WPF client、daemon client 与 daemon 之间的现行通信格式。
+本文档描述当前 .NET daemon、daemon client、WPF client 和 Web/Tauri 控制台使用的 **V2 协议**。唯一 WebSocket endpoint 为 `/api/v2`：控制请求使用 JSON-RPC 2.0，事件使用 JSON-RPC notification，文件和控制台字节使用版本化 binary frame。
 
-本文档以 `MCServerLauncher-Future` C# 实现为准。当前实现使用 TouchSocket WebSocket 承载 action/event 协议，消息正文使用 `System.Text.Json` 编码，字段命名使用 `snake_case`。
+daemon 已删除 V1 endpoint、旧 action/retcode envelope 和兼容解析器。本网站不是 V1 接入指南，也不为实验性 Rust daemon 声明 V2 兼容性。
 
-## 架构
+## 权威来源
 
-MCSL Future 分为两类主要进程：
+协议以 [MCServerLauncher-Future 的实现](https://github.com/MCSLTeam/MCServerLauncher-Future)为准：
 
-- **daemon**：运行在目标主机上，管理 instance、文件、Java 扫描、事件广播和 WebSocket/HTTP 入口。
-- **client**：通过 daemon client 连接 daemon。WPF client 是当前仓库内的桌面客户端。
+- `MCServerLauncher.Common/Contracts/Protocol` 定义 JSON-RPC wire envelope 和 binary codec；其他 `Contracts` 目录定义共享 wire DTO。
+- `MCServerLauncher.Daemon.API/Protocol/BuiltInProtocolDefinitions.cs` 定义内置 typed RPC/event descriptor 和 JSON metadata。
+- daemon 启动并完成插件准入后冻结 typed catalog，作为 dispatch、权限 metadata 和运行时发现文档的唯一来源。
+- 连接后调用 `rpc.discover` 获取 runtime OpenRPC；HTTP `GET /apifox.json` 由同一 catalog 生成，包含已准入插件。仓库中的 checked-in Apifox 基线仅覆盖内置协议。
 
-一个 client 可以连接多个 daemon。每个 daemon 暴露一个 WebSocket RPC 入口和少量 HTTP 辅助接口。
+本站文字说明不能替代运行时 schema，不维护独立的手写方法、权限或 DTO 注册表。本轮对齐的源码提交及维护方式见[仓库 README](https://github.com/MCSLTeam/mcsl-future-protocol/blob/main/README.md)。
 
-## 通信流程
+## 接入流程
 
-1. client 通过 HTTP 读取 daemon 信息，或使用已知地址直接连接。
-2. client 使用 token 建立 WebSocket 连接：`ws(s)://<host>:<port>/api/v1?token=<token>`。
-3. client 发送 [](action.md) 请求，daemon 返回同 `id` 的响应。
-4. client 订阅 [](event.md) 后，daemon 主动推送事件包。
-5. 文件传输使用 action 和 WebSocket frame，详见 [](file-transfer.md)。
+1. 通过 `GET /info` 获取 daemon 的 `api_version: "v2"`，见 [](connection.md)。
+2. 使用主令牌或短期 JWT 连接 `ws(s)://<host>:<port>/api/v2?token=<token>`。
+3. 按 [](action.md) 发送带 `id` 的 JSON-RPC 请求，先通过 [](actions.md) 获取当前 catalog。
+4. 按 [](event.md) 建立 typed subscription；重连后重新订阅并同步 instance catalog。
+5. 文件内容按 [](file-transfer.md) 使用 binary session 传输。
 
-## 编码约定
+主令牌不应交给普通 Web 用户。权限边界见 [](permissions.md)，外部用户认证与短期令牌签发见 [](web-user-system.md)。
 
-- action 和 event 消息使用 JSON，不使用 MessagePack。
-- enum 值按 `JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower)` 序列化。例如 `GetSystemInfo` 在线上为 `get_system_info`。
-- UUID 使用 JSON 字符串。
-- 时间戳使用 Unix milliseconds，类型为 JSON number。
-- action 参数和结果中的 payload 使用 JSON object，空参数通常为 `{}`。
+## 版本边界
+
+WebSocket 协议版本、binary header 版本、SDK 包版本和扩展子协议版本分别管理。V2 当前使用版本为 `1` 的 binary header；扩展 envelope 的 `mcsl.extension.v1` 也不代表恢复 daemon V1 endpoint。不能把其他服务（例如插件 Registry）的 `/api/v1/...` 当作 daemon V1。
