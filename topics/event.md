@@ -1,26 +1,37 @@
-# 事件
+# Event
 
-**事件（Event）** 是指由服务器主动向客户端推送的数据消息。
+**Event** 是 daemon 主动推送给已订阅 client 的 JSON 消息。client 需要先调用 `subscribe_event`。
 
-事件使用 MessagePack 格式编码。
+## 订阅事件
 
-## 事件订阅 {#subscribe}
+订阅通过 [](actions.md#subscribe_event) action 完成。当前实现不返回 listener id。取消订阅时再次提供相同的 `type` 和 `meta`。
 
-要接收事件，需先进行订阅。订阅事件通常需要相应权限。
-
-订阅事件请参见：[](actions.md#subscribe_event)。
-
-部分事件在订阅时需提供 **过滤器** 以实现消息筛选，例如 [](events.md#instance-log) 事件需指定实例 ID 作为过滤条件。
-
-订阅成功后将返回一个 **监听器 ID**，用于标识该订阅关系，并可用于后续取消订阅。
-
-取消事件订阅请参见：[](actions.md#unsubscribe_event)。
+某些事件需要 `meta` 作为过滤条件。例如 `instance_log` 需要指定 `instance_id`。
 
 ## 事件字段
 
-|     字段     |          数据类型          |               说明               |
-|:----------:|:----------------------:|:------------------------------:|
-|   event    |          str           | 事件名称，使用下划线命名法，如 `instance_log` |
-|    data    |          any           |        事件数据，因事件而异，可能不存在        |
-|    time    |      timestamp32       |            事件发生的时间             |
-| subscriber | [uuid](models.md#uuid) |            事件监听器 ID            |
+| 字段 | 数据类型 | 说明 |
+| --- | --- | --- |
+| `event` | string | event 名称，使用 snake_case，例如 `instance_log` |
+| `meta` | object \| null | 事件元数据或订阅过滤元数据 |
+| `data` | object \| null | 事件数据 |
+| `time` | int64 | Unix milliseconds 时间戳 |
+
+### 事件示例
+
+```json
+{
+  "event": "instance_log",
+  "meta": {
+    "instance_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+  },
+  "data": {
+    "log": "[Server thread/INFO]: Done"
+  },
+  "time": 1717171717000
+}
+```
+
+## 批量事件
+
+daemon 可能把同一 WebSocket frame 中的多个事件序列化为 `EventPacket[]`。client 应同时接受单个事件对象和事件数组。

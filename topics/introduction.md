@@ -1,26 +1,30 @@
 # MCSL Future 通信协议
 
-**MCSL Future 通信协议（MCSL Future Protocol，简称 MFP）** 是用于规范守护进程与客户端之间通信的协议标准。
+**MCSL Future 通信协议（MCSL Future Protocol，简称 MFP）** 描述 WPF client、daemon client 与 daemon 之间的现行通信格式。
 
-## 为什么需要 MCSL Future 通信协议？
+本文档以 `MCServerLauncher-Future` C# 实现为准。当前实现使用 TouchSocket WebSocket 承载 action/event 协议，消息正文使用 `System.Text.Json` 编码，字段命名使用 `snake_case`。
 
-MCSL Future 的架构中，分为守护进程和客户端两部分：
+## 架构
 
-- **守护进程（Daemon）**：负责管理服务器实例；
-- **客户端（Client）**：提供用户界面，并通过与守护进程通信实现对服务器的操作。
+MCSL Future 分为两类主要进程：
 
-MCSL Future 采用 [客户端-服务器架构](https://zh.wikipedia.org/wiki/%E5%AE%A2%E6%88%B7%E7%AB%AF-%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%9E%B6%E6%9E%84){ignore-vars="true"}
-的一大好处就是，单个客户端可以同时连接多个守护进程，实现对多个服务器的管理。
+- **daemon**：运行在目标主机上，管理 instance、文件、Java 扫描、事件广播和 WebSocket/HTTP 入口。
+- **client**：通过 daemon client 连接 daemon。WPF client 是当前仓库内的桌面客户端。
 
-而 MCSL Future 应运而生，用于守护进程与客户端之间的通信。
+一个 client 可以连接多个 daemon。每个 daemon 暴露一个 WebSocket RPC 入口和少量 HTTP 辅助接口。
 
 ## 通信流程
 
-首先，连接守护进程需要使用令牌进行鉴权，详见 **[](connection.md)**。
+1. client 通过 HTTP 读取 daemon 信息，或使用已知地址直接连接。
+2. client 使用 token 建立 WebSocket 连接：`ws(s)://<host>:<port>/api/v1?token=<token>`。
+3. client 发送 [](action.md) 请求，daemon 返回同 `id` 的响应。
+4. client 订阅 [](event.md) 后，daemon 主动推送事件包。
+5. 文件传输使用 action 和 WebSocket frame，详见 [](file-transfer.md)。
 
-通讯建立后，MFP 使用 **MessagePack** 格式进行数据传输，主要采用基于 **WebSocket** 协议进行通信。
+## 编码约定
 
-通讯信息包含以下两个核心部分：
-
-- **[](action.md)**：客户端发起请求，服务端响应操作结果；
-- **[](event.md)**：服务端主动向客户端推送消息或状态更新。
+- action 和 event 消息使用 JSON，不使用 MessagePack。
+- enum 值按 `JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower)` 序列化。例如 `GetSystemInfo` 在线上为 `get_system_info`。
+- UUID 使用 JSON 字符串。
+- 时间戳使用 Unix milliseconds，类型为 JSON number。
+- action 参数和结果中的 payload 使用 JSON object，空参数通常为 `{}`。

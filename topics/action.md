@@ -1,45 +1,71 @@
-# 操作
+# Action
 
-**操作（Action）** 是客户端主动发起的请求，服务器在收到请求后将会将结果返回给客户端。
-
-操作的请求和返回使用 MessagePack 格式编码。
+**Action** 是 client 主动发起的 JSON RPC 请求。daemon 收到请求后执行对应 handler，并返回同一个 `id` 的响应。
 
 ## 请求字段
 
-|   字段   |          数据类型          |                  说明                   |
-|:------:|:----------------------:|:-------------------------------------:|
-| action |          str           | 操作名称，使用下划线命名法，如 `file_upload_request` |
-|  data  |          any           |           操作参数，因操作而异，可能不存在            |
-|   id   | [uuid](models.md#uuid) |      操作编号，响应也包含一个 `id` 字段，它们的值相同      |
+| 字段 | 数据类型 | 说明 |
+| --- | --- | --- |
+| `action` | string | action 名称，使用 snake_case，例如 `get_system_info` |
+| `params` | object \| null | action 参数。无参数时通常使用 `{}` |
+| `id` | uuid string | 请求编号。响应中的 `id` 与请求一致 |
+
+### 请求示例
+
+```json
+{
+  "action": "ping",
+  "params": {},
+  "id": "11111111-1111-1111-1111-111111111111"
+}
+```
 
 ## 响应字段
 
-### 成功
+| 字段 | 数据类型 | 说明 |
+| --- | --- | --- |
+| `status` | string | 请求状态，当前使用 `ok` 或 `error` |
+| `retcode` | int | 返回码，见 [](action-errcode.md) |
+| `data` | object \| null | action 结果数据。失败时通常为 `null` |
+| `message` | string | 返回码消息，可能包含补充错误文本 |
+| `id` | uuid string | 请求编号，与请求中的 `id` 一致 |
 
-当任务成功完成时，服务器返回如下格式的响应：
+### 成功响应示例
 
-|   字段   |          数据类型          |          说明          |
-|:------:|:----------------------:|:--------------------:|
-|   id   | [uuid](models.md#uuid) | 操作编号，与请求中的 `id` 字段相同 |
-| result |          any           |   操作结果，因操作而异，可能不存在   |
+```json
+{
+  "status": "ok",
+  "retcode": 0,
+  "data": {
+    "time": 1717171717171
+  },
+  "message": "OK",
+  "id": "11111111-1111-1111-1111-111111111111"
+}
+```
 
-### 失败
+### 失败响应示例
 
-#### 执行失败
+```json
+{
+  "status": "error",
+  "retcode": 10002,
+  "data": null,
+  "message": "Unknown Action",
+  "id": "11111111-1111-1111-1111-111111111111"
+}
+```
 
-请求已成功解析，但操作执行过程中出错。
+## 命名规则
 
-|  字段   |          数据类型          |              说明              |
-|:-----:|:----------------------:|:----------------------------:|
-|  id   | [uuid](models.md#uuid) |     操作编号，与请求中的 `id` 字段相同     |
-| error |         uint16         | 错误代码，见 [](action-errcode.md) |
+C# 中的 `ActionType` enum 通过 JSON snake_case converter 进入 wire format。
 
-#### 解析失败
+| C# 名称 | JSON 名称 |
+| --- | --- |
+| `GetSystemInfo` | `get_system_info` |
+| `FileUploadRequest` | `file_upload_request` |
+| `UpdateInstanceSettings` | `update_instance_settings` |
 
-无法解析请求内容（如格式错误等）。
+## 权限
 
-|   字段    |  数据类型  |        说明         |
-|:-------:|:------:|:-----------------:|
-|  error  | uint16 | 错误代码，应始终为 `10001` |
-| request |  bin   |       发送的信息       |
-
+每个 action handler 声明一个权限节点。权限值为 `*` 时表示当前 handler 接受任意已连接客户端。权限匹配规则见 [](permissions.md)。

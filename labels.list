@@ -28,10 +28,6 @@
     <primary-label id="type-enum" name="枚举类型" short-name="枚举" color="purple">
         枚举数据类型
     </primary-label>
-    <primary-label id="msgpack-ext" name="Msgpack 扩展" short-name="Msgpack 扩展" color="marine">
-        Msgpack 扩展类型
-    </primary-label>
-
     <secondary-label id="windows" name="Windows" color="green">
         仅在 Windows 系统上可用
     </secondary-label>

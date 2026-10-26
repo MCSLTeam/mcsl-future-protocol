@@ -1,8 +1,65 @@
-# 操作列表
+# Action 列表
+
+本页按当前 `MCServerLauncher.Common.ProtoType.Action.ActionType` 和 daemon action handler 实现列出 action。JSON 名称由 C# enum 名称转换为 snake_case。
 
 ## 订阅事件 {#subscribe_event}
 
+<primary-label ref="system-action"/>
+<secondary-label ref="1.0"/>
+
+- **操作名称**：`subscribe_event`
+- **C# 名称**：`SubscribeEvent`
+- **所需权限**：`*`
+
+### 请求 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `type` | [`EventType`](models.md#event_type) | 要订阅的事件类型 |
+| `meta` | object \| null | 事件过滤元数据。`instance_log` 需要 `InstanceLogEventMeta`，`daemon_report` 可为 `null` |
+
+### 响应 {collapsible="true"}
+
+无数据，`data` 为 `{}`。
+
 ## 取消订阅事件 {#unsubscribe_event}
+
+<primary-label ref="system-action"/>
+<secondary-label ref="1.0"/>
+
+- **操作名称**：`unsubscribe_event`
+- **C# 名称**：`UnsubscribeEvent`
+- **所需权限**：`*`
+
+### 请求 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `type` | [`EventType`](models.md#event_type) | 要取消订阅的事件类型 |
+| `meta` | object \| null | 与订阅时相同的过滤元数据。为 `null` 时取消该事件类型的全部订阅 |
+
+### 响应 {collapsible="true"}
+
+无数据，`data` 为 `{}`。
+
+## Ping {#ping}
+
+<primary-label ref="system-action"/>
+<secondary-label ref="1.0"/>
+
+- **操作名称**：`ping`
+- **C# 名称**：`Ping`
+- **所需权限**：`*`
+
+### 请求 {collapsible="true"}
+
+无参数。
+
+### 响应 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `time` | int64 | daemon 返回时的 Unix milliseconds 时间戳 |
 
 ## 获取系统信息 {#get_system_info}
 
@@ -10,13 +67,37 @@
 <secondary-label ref="1.0"/>
 
 - **操作名称**：`get_system_info`
-- **所需权限**：`mcsl.daemon.system_info`
+- **C# 名称**：`GetSystemInfo`
+- **所需权限**：`*`
 
 ### 请求 {collapsible="true"}
 
-- **参数类型**：无参数
+无参数。
 
 ### 响应 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `info` | [`SystemInfo`](models.md#system_info) | daemon 当前系统信息 |
+
+## 获取权限 {#get_permissions}
+
+<primary-label ref="system-action"/>
+<secondary-label ref="1.0"/>
+
+- **操作名称**：`get_permissions`
+- **C# 名称**：`GetPermissions`
+- **所需权限**：`*`
+
+### 请求 {collapsible="true"}
+
+无参数。
+
+### 响应 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `permissions` | string[] | 当前连接 token 拥有的权限字符串 |
 
 ## 获取 Java 环境 {#get_java_list}
 
@@ -24,334 +105,205 @@
 <secondary-label ref="1.0"/>
 
 - **操作名称**：`get_java_list`
+- **C# 名称**：`GetJavaList`
 - **所需权限**：`mcsl.daemon.java_list`
 
 ### 请求 {collapsible="true"}
 
-- **参数类型**：无参数
+无参数。
 
 ### 响应 {collapsible="true"}
 
-- **响应类型**：`array<map<str, any>>`
-- **响应字段**：
-    - `path` - `str`：Java 环境路径
-    - `type` - `str`：Java 类型，`jre` 或 `jdk`
-    - `version` - `str`：Java 版本
-    - `arch` - `str`：Java 架构，例如 `x86_64` 等
-    - `vendor` - `str`：Java 供应商，例如 `Oracle Corporation` 等
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `java_list` | [`JavaInfo`](models.md#java_info)[] | daemon 扫描到的 Java 列表 |
 
-## 请求上传文件 {#file_upload_request}
+## 文件上传请求 {#file_upload_request}
 
 <primary-label ref="file-action"/>
 <secondary-label ref="1.0"/>
 
 - **操作名称**：`file_upload_request`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.write`
-
-父目录将被自动创建。如果文件已存在，将被覆盖。详见 [文件传输 - 本地文件上传](file-transfer.md#file_upload)。
+- **C# 名称**：`FileUploadRequest`
+- **所需权限**：`mcsl.daemon.file.upload`
 
 ### 请求 {collapsible="true"}
 
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：文件路径
-    - `size` - `uint64`：文件大小
-    - `sha1` - `str`：可选，文件 SHA-1 哈希值
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `path` | string \| null | daemon 侧目标路径。为 `null` 时上传到 daemon 上传缓存目录 |
+| `size` | int64 | 文件大小，单位字节 |
+| `sha1` | string \| null | 可选，完整文件 SHA-1。提供时 daemon 会在完成后校验 |
+| `timeout` | int64 \| null | 可选，会话超时毫秒数 |
 
 ### 响应 {collapsible="true"}
 
-- **响应类型**：`str`
-- **响应说明**：上传 ID
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `file_id` | uuid string | 上传会话 ID |
 
-## 请求下载文件 {#file_download_request}
+## 上传文件分片 {#file_upload_chunk}
+
+<primary-label ref="file-action"/>
+<secondary-label ref="1.0"/>
+
+- **操作名称**：`file_upload_chunk`
+- **C# 名称**：`FileUploadChunk`
+- **所需权限**：`mcsl.daemon.file.upload`
+
+### 请求 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `file_id` | uuid string | 上传会话 ID |
+| `offset` | int64 | 分片写入偏移 |
+| `data` | string | Base64 编码的分片内容 |
+
+### 响应 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `done` | bool | 是否完成上传 |
+| `received` | int64 | daemon 已收到的字节数 |
+
+## 取消上传文件 {#file_upload_cancel}
+
+<primary-label ref="file-action"/>
+<secondary-label ref="1.0"/>
+
+- **操作名称**：`file_upload_cancel`
+- **C# 名称**：`FileUploadCancel`
+- **所需权限**：`mcsl.daemon.file.upload`
+
+### 请求 {collapsible="true"}
+
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `file_id` | uuid string | 上传会话 ID |
+
+### 响应 {collapsible="true"}
+
+无数据，`data` 为 `{}`。
+
+## 文件下载请求 {#file_download_request}
 
 <primary-label ref="file-action"/>
 <secondary-label ref="1.0"/>
 
 - **操作名称**：`file_download_request`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.read`
-
-详见 [文件传输 - 文件下载](file-transfer.md#file_download)。
+- **C# 名称**：`FileDownloadRequest`
+- **所需权限**：`mcsl.daemon.file.download`
 
 ### 请求 {collapsible="true"}
 
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：文件路径
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `path` | string | daemon 侧文件路径 |
+| `timeout` | int64 \| null | 可选，会话超时毫秒数 |
 
 ### 响应 {collapsible="true"}
 
-- **响应类型**：`str`
-- **响应说明**：下载 ID
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `file_id` | uuid string | 下载会话 ID |
+| `size` | int64 | 文件大小，单位字节 |
+| `sha1` | string | 文件 SHA-1 |
 
-#### 可能的错误
-
-- `21001` - 文件不存在
-
-## 创建目录 {#create_dir}
+## 下载文件范围 {#file_download_range}
 
 <primary-label ref="file-action"/>
 <secondary-label ref="1.0"/>
 
-- **操作名称**：`create_dir`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.create_dir`
-
-父目录将被自动创建。
+- **操作名称**：`file_download_range`
+- **C# 名称**：`FileDownloadRange`
+- **所需权限**：`mcsl.daemon.file.download`
 
 ### 请求 {collapsible="true"}
 
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：目录路径
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `file_id` | uuid string | 下载会话 ID |
+| `range` | string | 范围字符串，格式为 `<from>..<to>` |
 
 ### 响应 {collapsible="true"}
 
-- **响应类型**：无数据
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `content` | string | 当前实现返回 BigEndianUnicode 字符串内容 |
 
-#### 可能的错误
-
-- `21002` - 目录已存在
-
-## 创建文件 {#create_file}
+## 关闭下载文件 {#file_download_close}
 
 <primary-label ref="file-action"/>
 <secondary-label ref="1.0"/>
 
-- **操作名称**：`create_file`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.create`
-
-父目录将被自动创建。
+- **操作名称**：`file_download_close`
+- **C# 名称**：`FileDownloadClose`
+- **所需权限**：`mcsl.daemon.file.download`
 
 ### 请求 {collapsible="true"}
 
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：文件路径
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `file_id` | uuid string | 下载会话 ID |
 
 ### 响应 {collapsible="true"}
 
-- **响应类型**：无数据
+无数据，`data` 为 `{}`。
 
-#### 可能的错误
-
-- `21002` - 文件已存在
-
-## 创建符号链接 {#create_link}
+## 文件信息 {#file-info-actions}
 
 <primary-label ref="file-action"/>
 <secondary-label ref="1.0"/>
 
-- **操作名称**：`create_file_link`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.link`
+| 操作名称 | C# 名称 | 权限 | 参数 | 响应 |
+| --- | --- | --- | --- | --- |
+| `get_file_info` | `GetFileInfo` | `mcsl.daemon.file.info.file` | `path: string` | `meta: FileMetadata` |
+| `get_directory_info` | `GetDirectoryInfo` | `mcsl.daemon.file.info.directory` | `path: string` | `parent: string?`, `files`, `directories` |
 
-父目录将被自动创建。
-
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `target` - [`FilePath`](models.md#file_path)：源文件路径
-    - `link` - [`FilePath`](models.md#file_path)：链接文件路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：无数据
-
-#### 可能的错误
-
-- `21001` - 源文件不存在
-- `21002` - 链接文件已存在
-
-## 移动文件或目录 {#move_file}
+## 文件操作 {#file-operation-actions}
 
 <primary-label ref="file-action"/>
 <secondary-label ref="1.0"/>
 
-- **操作名称**：`move_file`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.move`
+| 操作名称 | C# 名称 | 权限 | 参数 |
+| --- | --- | --- | --- |
+| `delete_file` | `DeleteFile` | `mcsl.daemon.file.delete.file` | `path: string` |
+| `delete_directory` | `DeleteDirectory` | `mcsl.daemon.file.delete.directory` | `path: string`, `recursive: bool` |
+| `rename_file` | `RenameFile` | `mcsl.daemon.file.rename.file` | `path: string`, `new_name: string` |
+| `rename_directory` | `RenameDirectory` | `mcsl.daemon.file.rename.directory` | `path: string`, `new_name: string` |
+| `create_directory` | `CreateDirectory` | `mcsl.daemon.file.create.directory` | `path: string` |
+| `move_file` | `MoveFile` | `mcsl.daemon.file.move.file` | `source_path: string`, `destination_path: string` |
+| `move_directory` | `MoveDirectory` | `mcsl.daemon.file.move.directory` | `source_path: string`, `destination_path: string` |
+| `copy_file` | `CopyFile` | `mcsl.daemon.file.copy.file` | `source_path: string`, `destination_path: string` |
+| `copy_directory` | `CopyDirectory` | `mcsl.daemon.file.copy.directory` | `source_path: string`, `destination_path: string` |
 
-父目录将被自动创建。
+所有这些操作成功时返回空对象 `{}`。
 
-### 请求 {collapsible="true"}
+## Instance 操作 {#instance-actions}
 
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `from` - [`FilePath`](models.md#file_path)：源文件路径
-    - `dest` - [`FilePath`](models.md#file_path)：目标文件路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：无数据
-
-#### 可能的错误
-
-- `21001` - 源文件不存在
-- `21002` - 目标文件已存在
-
-## 复制文件或目录 {#copy_file}
-
-<primary-label ref="file-action"/>
+<primary-label ref="instance-action"/>
 <secondary-label ref="1.0"/>
 
-- **操作名称**：`copy_file`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.copy`
+| 操作名称 | C# 名称 | 权限 | 参数 | 响应 |
+| --- | --- | --- | --- | --- |
+| `add_instance` | `AddInstance` | `*` | `setting: InstanceFactorySetting` | `config: InstanceConfig` |
+| `remove_instance` | `RemoveInstance` | `*` | `id: uuid` | 空对象 |
+| `start_instance` | `StartInstance` | `*` | `id: uuid` | 空对象 |
+| `stop_instance` | `StopInstance` | `*` | `id: uuid` | 空对象 |
+| `kill_instance` | `KillInstance` | `*` | `id: uuid` | 空对象 |
+| `send_to_instance` | `SendToInstance` | `*` | `id: uuid`, `message: string` | 空对象 |
+| `get_instance_report` | `GetInstanceReport` | `*` | `id: uuid` | `report: InstanceReport` |
+| `get_all_reports` | `GetAllReports` | `*` | 无参数 | `reports: map<uuid, InstanceReport>` |
+| `get_instance_log_history` | `GetInstanceLogHistory` | `*` | `id: uuid` | `logs: string[]` |
+| `get_instance_settings` | `GetInstanceSettings` | `*` | `id: uuid` | [`GetInstanceSettingsResult`](models.md#get_instance_settings_result) |
+| `update_instance_settings` | `UpdateInstanceSettings` | `*` | [`UpdateInstanceSettingsParameter`](models.md#update_instance_settings_parameter) | [`UpdateInstanceSettingsResult`](models.md#update_instance_settings_result) |
 
-父目录将被自动创建。
+## Event rule 操作 {#event-rule-actions}
 
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `from` - [`FilePath`](models.md#file_path)：源文件路径
-    - `dest` - [`FilePath`](models.md#file_path)：目标文件路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：无数据
-
-#### 可能的错误
-
-- `21001` - 源文件不存在
-- `21002` - 目标文件已存在
-
-## 删除文件或目录 {#delete_file}
-
-<primary-label ref="file-action"/>
+<primary-label ref="instance-action"/>
 <secondary-label ref="1.0"/>
 
-- **操作名称**：`delete_file`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.delete`
-
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：文件路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：无数据
-
-#### 可能的错误
-
-- `21001` - 文件不存在
-
-## 更改文件或目录权限 {#chmod}
-
-<primary-label ref="file-action"/>
-<secondary-label ref="1.0"/>
-<secondary-label ref="unix"/>
-
-- **操作名称**：`chmod`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.chmod`
-
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：文件路径
-    - `mode` - `str`：权限模式，例如 `755`
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：无数据
-
-#### 可能的错误
-
-- `21001` - 文件不存在
-
-## 获取文件信息 {#get_file_info}
-
-<primary-label ref="file-action"/>
-<secondary-label ref="1.0"/>
-
-- **操作名称**：`get_file_info`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.read`
-
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：文件路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：[`FileData`](models.md#file_data)
-
-#### 可能的错误
-
-- `21001` - 文件不存在
-
-## 获取目录信息 {#get_directory_info}
-
-<primary-label ref="file-action"/>
-<secondary-label ref="1.0"/>
-
-- **操作名称**：`get_directory_info`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.read`
-
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `path` - [`FilePath`](models.md#file_path)：目录路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：[`DirectoryData`](models.md#directory_data)
-
-#### 可能的错误
-
-- `21001` - 目录不存在
-
-## 压缩文件或目录 {#compress_file}
-
-<primary-label ref="file-action"/>
-<secondary-label ref="1.0"/>
-
-- **操作名称**：`compress_file`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.compress`
-
-父目录将被自动创建。
-
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `type` - [`CompressionType`](models.md#compression_type)：压缩算法
-    - `dest` - [`FilePath`](models.md#file_path)：压缩包存放路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：无数据
-
-#### 可能的错误
-
-- `21001` - 文件不存在
-- `21002` - 存放路径存在文件
-
-## 解压文件 {#decompress_file}
-
-<primary-label ref="file-action"/>
-<secondary-label ref="1.0"/>
-
-- **操作名称**：`decompress_file`
-- **所需权限**：`mcsl.daemon.instance.<实例 ID>.file.decompress`
-
-父目录将被自动创建。将在解压路径新建一个与压缩包同名的目录。
-
-### 请求 {collapsible="true"}
-
-- **参数类型**：`map<str, any>`
-- **参数字段**：
-    - `type` - [`CompressionType`](models.md#compression_type)：压缩算法
-    - `dest` - [`FilePath`](models.md#file_path)：解压路径
-
-### 响应 {collapsible="true"}
-
-- **响应类型**：无数据
-
-#### 可能的错误
-
-- `21001` - 文件不存在
-- `21002` - 解压路径存在同名目录
+| 操作名称 | C# 名称 | 权限 | 参数 | 响应 |
+| --- | --- | --- | --- | --- |
+| `get_event_rules` | `GetEventRules` | `*` | `instance_id: uuid` | `rules: EventRule[]` |
+| `save_event_rules` | `SaveEventRules` | `*` | `instance_id: uuid`, `rules: EventRule[]` | 空对象 |
